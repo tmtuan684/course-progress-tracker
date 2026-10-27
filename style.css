@@ -129,3 +129,21 @@ small { color: var(--muted); }
   .term ul { font-size: 9px; padding-left: 12px; margin: 2px 0 0; }
 }
 @media print { #student input { field-sizing: content; min-width: 60px; text-indent: 0; } }
+
+/* RMIT colour theme (brand red and deep navy). Screen only, so the printed report is unchanged. */
+:root { --navy: #000054; --red: #e60028; --required: #000054; }
+@media screen {
+  body { font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; }
+  header { border-bottom: 4px solid var(--red); }
+  header h1 { letter-spacing: .3px; }
+  #print { background: var(--red); border-color: var(--red); font-weight: 600; }
+  #print:hover { background: #c4001f; }
+  h2 { border-left: 4px solid var(--red); padding-left: 8px; }
+  .card.done { border-color: var(--red); box-shadow: 0 0 0 1px var(--red) inset; }
+  .pathways li.met, .check.ok { color: #1b6b30; }
+  .course.done { background: #fdecef; }
+  .chip.req { background: #dcdcf0; }
+  .toolbar input:focus, .toolbar select:focus, .uni input:focus, #student input:focus, .plan select:focus,
+  .tick:focus-visible { outline: 2px solid var(--red); outline-offset: 1px; }
+  .tick { accent-color: var(--red); }
+}
