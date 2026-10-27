@@ -1,0 +1,74 @@
+:root {
+  --bg: #f6f7f9; --card: #fff; --ink: #1d2433; --muted: #6b7385; --line: #e1e5ec;
+  --required: #6aa84f; --major: #e0a800; --minor: #3d85c6; --bad: #b3261e; --ok: #2e7d32;
+  --navy: #1f3864;
+}
+* { box-sizing: border-box; }
+body { margin: 0; font: 15px/1.45 system-ui, -apple-system, "Segoe UI", Arial, sans-serif; background: var(--bg); color: var(--ink); }
+header { display: flex; flex-wrap: wrap; gap: 12px; justify-content: space-between; align-items: center;
+  padding: 16px 20px; background: var(--navy); color: #fff; }
+header h1 { margin: 0; font-size: 22px; }
+header p { margin: 2px 0 0; opacity: .8; font-size: 13px; }
+.actions { display: flex; gap: 8px; }
+button, .button { font: inherit; padding: 6px 12px; border: 1px solid #fff6; border-radius: 6px; background: #fff2;
+  color: #fff; cursor: pointer; }
+button:hover, .button:hover { background: #fff3; }
+button.danger { border-color: #ffb4ab; }
+
+main { display: grid; grid-template-columns: minmax(280px, 380px) 1fr; gap: 20px; padding: 20px; max-width: 1200px; margin: 0 auto; }
+@media (max-width: 800px) { main { grid-template-columns: 1fr; } }
+#progress { align-self: start; position: sticky; top: 12px; display: grid; gap: 14px; }
+@media (max-width: 800px) { #progress { position: static; } }
+
+.card, #courses { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; }
+.card.done { border-color: var(--ok); box-shadow: 0 0 0 1px var(--ok) inset; }
+h2 { margin: 0 0 8px; font-size: 16px; color: var(--navy); }
+h3 { margin: 0 0 4px; font-size: 14px; }
+.row { display: flex; justify-content: space-between; gap: 8px; }
+.row.total { border-top: 1px solid var(--line); margin-top: 6px; padding-top: 6px; }
+
+.bar { height: 8px; border-radius: 4px; background: var(--line); margin: 4px 0 6px; overflow: hidden; }
+.bar div { height: 100%; background: var(--navy); transition: width .2s; }
+.bar.required div { background: var(--required); }
+.bar.major div { background: var(--major); }
+.bar.minor div { background: var(--minor); }
+
+.pathways, .groups { list-style: none; margin: 6px 0; padding: 0; }
+.pathways li { padding: 2px 0; color: var(--muted); }
+.pathways li.met { color: var(--ok); font-weight: 600; }
+.result { font-weight: 600; margin: 6px 0; }
+.uni { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin: 8px 0; }
+.uni input { width: 64px; padding: 4px; background: #fff7d6; border: 1px solid var(--line); border-radius: 4px; }
+.hint { color: var(--muted); font-size: 13px; margin: 4px 0 8px; }
+.group { padding: 4px 0; font-size: 14px; }
+.group.major.done .row { color: #8a6500; font-weight: 600; }
+.group.minor.done .row { color: #1c5d99; font-weight: 600; }
+.warn, .bad { color: var(--bad); }
+small { color: var(--muted); }
+
+.toolbar { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 10px; }
+.toolbar input, .toolbar select { padding: 7px 10px; border: 1px solid var(--line); border-radius: 6px; font: inherit; }
+.toolbar input { flex: 1 1 180px; }
+
+.course { display: grid; grid-template-columns: auto 1fr auto; gap: 10px; align-items: center;
+  padding: 8px 6px; border-bottom: 1px solid var(--line); }
+.course.done { background: #eef7ea; }
+.course .tick { width: 18px; height: 18px; }
+.title small { margin-left: 4px; }
+.chips { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 3px; }
+.chip { font-size: 11px; padding: 1px 7px; border-radius: 10px; background: var(--line); color: var(--ink); }
+.chip.req { background: #d9ead3; }
+.chip.major { background: #ffe599; }
+.chip.minor { background: #cfe2f3; }
+.chip.ok { background: #c6e0b4; }
+.chip.muted { background: #eee; color: var(--muted); }
+.plan { display: grid; gap: 2px; justify-items: end; }
+.plan select { padding: 4px; border: 1px solid var(--line); border-radius: 6px; font: inherit; background: #fff7d6; }
+.plan select:disabled { background: #f0f0f0; }
+.check.ok { color: var(--ok); }
+.check.bad { color: var(--bad); }
+.empty { color: var(--muted); padding: 16px 0; }
+#plan-summary { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; }
+.term { border: 1px solid var(--line); border-radius: 8px; padding: 10px; }
+.term ul { margin: 6px 0 0; padding-left: 18px; font-size: 13px; }
+.term li.bad { color: var(--bad); }

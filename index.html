@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Course Planner</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <div>
+      <h1>Course Planner</h1>
+      <p id="program"></p>
+    </div>
+    <div class="actions">
+      <button id="export">Export progress</button>
+      <label class="button">Import<input id="import" type="file" accept="application/json" hidden></label>
+      <button id="reset" class="danger">Reset</button>
+    </div>
+  </header>
+
+  <main>
+    <section id="progress" aria-label="Progress"></section>
+
+    <section id="courses" aria-label="Courses">
+      <div class="toolbar">
+        <input id="search" type="search" placeholder="Search code or name">
+        <select id="filter" aria-label="Filter courses"></select>
+      </div>
+      <div id="list"></div>
+      <h2>Semester plan</h2>
+      <div id="plan-summary"></div>
+    </section>
+  </main>
+
+  <!-- order matters: data first, then logic, then the UI that uses both -->
+  <script src="data.js"></script>
+  <script src="logic.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
