@@ -13,11 +13,17 @@
       <p id="program"></p>
     </div>
     <div class="actions">
+      <button id="print">Download PDF report</button>
       <button id="export">Export progress</button>
       <label class="button">Import<input id="import" type="file" accept="application/json" hidden></label>
       <button id="reset" class="danger">Reset</button>
     </div>
   </header>
+
+  <div id="student">
+    <label>Student name <input id="name" type="text" maxlength="80" placeholder="Type your name for the report"></label>
+    <span id="report-date"></span>
+  </div>
 
   <main>
     <section id="progress" aria-label="Progress"></section>
@@ -28,6 +34,7 @@
         <select id="filter" aria-label="Filter courses"></select>
       </div>
       <div id="list"></div>
+      <div id="report-completed"></div>
       <h2>Semester plan</h2>
       <div id="plan-summary"></div>
     </section>

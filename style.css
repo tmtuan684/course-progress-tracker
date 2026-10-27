@@ -72,3 +72,60 @@ small { color: var(--muted); }
 .term { border: 1px solid var(--line); border-radius: 8px; padding: 10px; }
 .term ul { margin: 6px 0 0; padding-left: 18px; font-size: 13px; }
 .term li.bad { color: var(--bad); }
+
+#student { display: flex; flex-wrap: wrap; gap: 12px; justify-content: space-between; align-items: center;
+  max-width: 1200px; margin: 12px auto 0; padding: 0 20px; }
+#student input { padding: 6px 10px; border: 1px solid var(--line); border-radius: 6px; font: inherit; width: 260px; }
+#report-date, #report-completed { display: none; }
+
+@media print {
+  body { background: #fff; font-size: 12px; }
+  header { background: none; color: #000; padding: 0 0 8px; border-bottom: 2px solid var(--navy); }
+  header p { color: #444; }
+  .actions, .toolbar, #list, .uni input + * { display: none !important; }
+  #student { margin: 8px 0; padding: 0; }
+  #student input { border: none; width: auto; font-weight: 600; padding: 0; }
+  #student input::placeholder { color: transparent; }
+  #report-date { display: inline; }
+  #report-completed { display: block; margin-bottom: 12px; }
+  #report-completed ul { columns: 2; margin: 4px 0; padding-left: 18px; }
+  main { display: block; padding: 0; max-width: none; }
+  #progress { position: static; display: block; }
+  .card, #courses { border: 1px solid #bbb; margin-bottom: 10px; padding: 8px 10px; break-inside: avoid; }
+  .card.done { box-shadow: none; }
+  .uni input { border: none; background: none; width: auto; text-align: right; font-weight: 600; }
+  .bar, .bar div, .chip, .course.done { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .term { break-inside: avoid; }
+}
+
+/* One-page report: compact two-column layout */
+@media print {
+  @page { size: A4; margin: 10mm; }
+  body { font-size: 10px; line-height: 1.25; }
+  header { padding-bottom: 4px; }
+  header h1 { font-size: 16px; }
+  header p, #student { font-size: 10px; }
+  #student { margin: 4px 0; }
+  h2 { font-size: 12px; margin: 0 0 3px; }
+  h3 { font-size: 10px; }
+  #progress { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+  #progress > .card:nth-child(2) { grid-column: 1 / -1; order: 3; }
+  .card, #courses { padding: 5px 8px; margin: 0; }
+  .bar { height: 5px; margin: 2px 0 3px; }
+  .pathways { margin: 2px 0; }
+  .pathways li { padding: 0; }
+  .result { margin: 2px 0; }
+  .uni { margin: 2px 0; }
+  .hint { margin: 2px 0 4px; font-size: 10px; }
+  .groups { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0 12px; }
+  .group { padding: 1px 0; font-size: 10px; }
+  .warn { font-size: 9px; }
+  #courses { border: none; padding: 0; }
+  #report-completed { margin: 6px 0; }
+  #report-completed ul { columns: 3; font-size: 9px; margin: 2px 0; padding-left: 12px; }
+  #plan-summary { grid-template-columns: repeat(4, 1fr); gap: 6px; }
+  .term { padding: 4px 6px; }
+  .term p { margin: 2px 0; }
+  .term ul { font-size: 9px; padding-left: 12px; margin: 2px 0 0; }
+}
+@media print { #student input { field-sizing: content; min-width: 60px; text-indent: 0; } }

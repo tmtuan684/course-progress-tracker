@@ -8,7 +8,7 @@ const groupById = Object.fromEntries(data.groups.map((g) => [g.id, g]));
 const nextTerm = CONFIG.planTerms[0];
 
 // ---------- state (saved in the browser with localStorage) ----------
-const emptyState = () => ({ done: [], uni: 0, plan: {} });
+const emptyState = () => ({ done: [], uni: 0, plan: {}, name: '' });
 let state = load();
 
 function load() {
@@ -27,6 +27,7 @@ function clean(s) {
   const out = emptyState();
   if (Array.isArray(s.done)) out.done = [...new Set(s.done.filter((id) => courseById[id]))];
   out.uni = Math.max(0, Math.min(8, Math.floor(Number(s.uni) || 0)));
+  out.name = String(s.name || '').slice(0, 80);
   if (s.plan && typeof s.plan === 'object')
     for (const [id, term] of Object.entries(s.plan))
       if (courseById[id] && CONFIG.planTerms.includes(term)) out.plan[id] = term;
@@ -152,7 +153,16 @@ function renderPlanSummary() {
   $('#plan-summary').innerHTML = rows.join('');
 }
 
-function renderAll() { renderProgress(); renderList(); renderPlanSummary(); }
+// Completed courses: hidden on screen, shown only in the printed/PDF report.
+function renderReport() {
+  const list = data.courses.filter((c) => state.done.includes(c.id));
+  $('#report-completed').innerHTML = `<h2>Completed courses (${list.length})</h2>` +
+    (list.length ? `<ul>${list.map((c) => `<li>${esc(c.id)} ${esc(c.name)} - ${c.credits} cp</li>`).join('')}</ul>`
+      : '<p>None yet.</p>');
+  $('#report-date').textContent = 'Report date: ' + new Date().toLocaleDateString();
+}
+
+function renderAll() { renderProgress(); renderList(); renderPlanSummary(); renderReport(); }
 
 // ---------- events (one listener per area, using event delegation) ----------
 $('#list').addEventListener('change', (e) => {
@@ -173,6 +183,9 @@ $('#progress').addEventListener('change', (e) => {
   save(); renderAll();
 });
 
+$('#name').addEventListener('input', (e) => { state.name = e.target.value.slice(0, 80); save(); });
+$('#print').addEventListener('click', () => { renderReport(); window.print(); });
+
 $('#filter').addEventListener('change', renderList);
 $('#search').addEventListener('input', renderList);
 
@@ -188,7 +201,7 @@ $('#import').addEventListener('change', (e) => {
   if (!file) return;
   const reader = new FileReader();
   reader.onload = () => {
-    try { state = clean(JSON.parse(reader.result)); save(); renderAll(); }
+    try { state = clean(JSON.parse(reader.result)); $('#name').value = state.name; save(); renderAll(); }
     catch (err) { alert('That file is not a valid progress file.'); }
   };
   reader.readAsText(file);
@@ -196,10 +209,11 @@ $('#import').addEventListener('change', (e) => {
 });
 
 $('#reset').addEventListener('click', () => {
-  if (confirm('Clear all progress and plans?')) { state = emptyState(); save(); renderAll(); }
+  if (confirm('Clear all progress and plans?')) { state = emptyState(); $('#name').value = ''; save(); renderAll(); }
 });
 
 // ---------- start ----------
 $('#program').textContent = data.program;
+$('#name').value = state.name;
 $('#filter').innerHTML = filterOptions().map(([v, label]) => `<option value="${esc(v)}">${esc(label)}</option>`).join('');
 renderAll();

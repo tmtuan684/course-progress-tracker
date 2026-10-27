@@ -48,7 +48,8 @@ Keep all files in one folder and double-click `index.html`. To share it with stu
 2. Enter the number of university electives completed.
 3. Use the search box and filter (all, not completed, offered next term, required, or a single major/minor) to find courses.
 4. Pick a term in **Plan for…** to check the course is offered. The Semester plan section shows courses, credits and problems per term.
-5. **Export progress** saves a JSON file; **Import** loads it back (for another computer or a backup). **Reset** clears everything.
+5. **Download PDF report** opens the print dialog with a clean report (name, date, progress, completed courses, semester plan); choose "Save as PDF". Type your name in the box under the header first.
+6. **Export progress** saves a JSON file; **Import** loads it back (for another computer or a backup). **Reset** clears everything.
 
 ## Updating the data
 
