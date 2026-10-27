@@ -147,3 +147,21 @@ small { color: var(--muted); }
   .tick:focus-visible { outline: 2px solid var(--red); outline-offset: 1px; }
   .tick { accent-color: var(--red); }
 }
+
+/* Course list page and navigation */
+nav { display: flex; gap: 4px; }
+nav a { color: #fff; text-decoration: none; padding: 6px 12px; border-radius: 6px; border-bottom: 2px solid transparent; }
+nav a:hover { background: #fff2; }
+nav a.current { border-bottom-color: var(--red); font-weight: 600; }
+main.wide { display: block; }
+.table-wrap { overflow-x: auto; }
+#table { width: 100%; border-collapse: collapse; font-size: 14px; }
+#table th { position: sticky; top: 0; background: var(--navy); color: #fff; text-align: left; padding: 8px; white-space: nowrap; }
+#table td { padding: 7px 8px; border-bottom: 1px solid var(--line); vertical-align: top; }
+#table tbody tr:hover { background: #f3f3fa; }
+#table .chip { display: inline-block; margin: 1px 2px 1px 0; }
+.off { text-align: center; white-space: nowrap; font-size: 13px; }
+.off.yes { background: #dff0d8; color: #1b6b30; font-weight: 600; }
+.off.cancelled { background: #fdecef; color: var(--bad); }
+.off.no, .off.none { color: var(--muted); }
+@media print { nav { display: none !important; } }

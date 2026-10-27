@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Course List &amp; Offering</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <div>
+      <h1>Course List &amp; Offering</h1>
+      <p id="program"></p>
+    </div>
+    <nav><a href="index.html">My progress</a><a href="courses.html" class="current">Course list</a></nav>
+  </header>
+
+  <main class="wide">
+    <section id="courses" aria-label="Course list">
+      <div class="toolbar">
+        <input id="search" type="search" placeholder="Search code or name">
+        <select id="filter" aria-label="Filter by type or group"></select>
+        <select id="offered" aria-label="Filter by offering"></select>
+      </div>
+      <p id="count" class="hint"></p>
+      <div class="table-wrap"><table id="table"></table></div>
+    </section>
+  </main>
+
+  <script src="data.js"></script>
+  <script src="logic.js"></script>
+  <script src="courses.js"></script>
+</body>
+</html>
