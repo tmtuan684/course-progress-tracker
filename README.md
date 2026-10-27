@@ -4,17 +4,18 @@ A small web app where a student ticks completed courses, sees progress toward th
 
 ## Run it
 
-Keep all files in one folder and double-click `index.html`. To share it with students, upload the five site files to any static host (GitHub Pages, Netlify, a university web space).
+Keep all files in one folder and double-click `index.html`. To share it with students, upload the site files (everything except `tools/` and `README.md`) to any static host (GitHub Pages, Netlify, a university web space).
 
 ## Files
 
 | File | Purpose |
 |---|---|
-| `index.html` | Page skeleton. Script order matters: data, logic, app. |
-| `style.css` | Appearance. |
+| `index.html` | My progress page. Script order matters: data, logic, app. |
+| `courses.html`, `courses.js` | Course list page: every course with its offering per term (read-only). |
+| `style.css` | Appearance: RMIT colours (red `#e60028`, navy `#000054`) in `:root`, plus a compact print layout for the one-page PDF. |
 | `app.js` | User interface: keeps state, saves it, draws the page. Contains no degree rules. |
 | `logic.js` | The degree rules as pure functions (no page code), so they can be tested in Node. |
-| `data.js` | All course data, generated from the Excel file. Sets `window.DATA`. |
+| `data.js` | All course data, generated from the Excel file. Sets the global `window.DATA`, which every page reads. |
 | `tools/make_data.py` | Regenerates `data.js` from `Course_List.xlsx`. Not needed to run the site. |
 
 `data.js` is a JavaScript file rather than JSON because browsers block loading a local JSON file when a page is opened directly from disk.
@@ -44,12 +45,18 @@ Keep all files in one folder and double-click `index.html`. To share it with stu
 
 ## Using the app
 
+The header menu switches between **My progress** and **Course list**.
+
 1. Tick **Completed** on each finished course. The left panel updates: required courses, the four pathways, per-major/minor progress, and credit points.
 2. Enter the number of university electives completed.
 3. Use the search box and filter (all, not completed, offered next term, required, or a single major/minor) to find courses.
 4. Pick a term in **Plan for…** to check the course is offered. The Semester plan section shows courses, credits and problems per term.
-5. **Download PDF report** opens the print dialog with a clean report (name, date, progress, completed courses, semester plan); choose "Save as PDF". Type your name in the box under the header first.
+5. **Download PDF report** opens the print dialog with a one-page report (name, date, progress, completed courses, semester plan); choose "Save as PDF". Type your name in the box under the header first.
 6. **Export progress** saves a JSON file; **Import** loads it back (for another computer or a backup). **Reset** clears everything.
+
+### Course list page
+
+Open **Course list** to browse all courses with their type, credits, majors/minors and a column per term showing Offered, Not offered or Cancelled. Search by code or name, filter by required, elective or a single major/minor, or show only courses offered in a chosen term. It does not change the student's progress.
 
 ## Updating the data
 
@@ -57,7 +64,13 @@ Keep all files in one folder and double-click `index.html`. To share it with stu
 2. From this folder run: `python3 -I tools/make_data.py ../Course_List.xlsx data.js`
 3. Refresh the page.
 
-To add a planning term, add it to `planTerms` in `logic.js` and make sure the schedule sheet has a matching column.
+To add a planning term, add it to `planTerms` in `logic.js` and make sure the schedule sheet has a matching column. The first entry in `planTerms` is also what "offered next term" uses, so roll it forward each term.
+
+For a new academic year, also check:
+- `make_data.py` expects a sheet named "Offering Schedule 2026" with three term columns (E to G); change it if the sheet name or number of terms differs.
+- Saved progress is keyed by course code, so a renamed, recoded or removed course loses its tick. Keep a code map or ask students to export first.
+- Use a separate folder per cohort if program versions differ, and link `data.js?v=2027` so browsers don't serve a cached copy.
+- Review the assumptions below, since the pathway rules are written in `logic.js`, not in the data.
 
 ## Assumptions and limits
 
