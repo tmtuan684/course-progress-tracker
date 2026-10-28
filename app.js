@@ -172,6 +172,30 @@ function renderReport() {
 function renderAll() { renderProgress(); renderList(); renderPlanSummary(); renderReport(); }
 
 // ---------- events (one listener per area, using event delegation) ----------
+// Shift+click on a tick box applies the same state to every course between it and the last box clicked.
+let lastTick = null;
+let lastIds = [];            // rows shown when the last box was clicked (a ticked row may vanish from a filtered list)
+$('#list').addEventListener('mousedown', (e) => { if (e.shiftKey && e.target.classList.contains('tick')) e.preventDefault(); });
+$('#list').addEventListener('click', (e) => {
+  if (!e.target.classList.contains('tick')) return;
+  const id = e.target.closest('.course').dataset.id;
+  if (e.shiftKey && lastTick) {
+    const now = [...document.querySelectorAll('#list .course')].map((row) => row.dataset.id);
+    const ids = lastIds.includes(lastTick) && lastIds.includes(id) ? lastIds : now;
+    const from = ids.indexOf(lastTick), to = ids.indexOf(id);
+    if (from >= 0 && to >= 0) {
+      const range = ids.slice(Math.min(from, to), Math.max(from, to) + 1);
+      if (e.target.checked) { state.done = [...new Set([...state.done, ...range])]; range.forEach((x) => delete state.plan[x]); }
+      else state.done = state.done.filter((x) => !range.includes(x));
+      lastTick = id; lastIds = ids.filter((x) => now.includes(x) || x === id);
+      save(); renderAll();
+      return;
+    }
+  }
+  lastTick = id;
+  lastIds = [...document.querySelectorAll('#list .course')].map((row) => row.dataset.id);
+});
+
 $('#list').addEventListener('change', (e) => {
   const id = e.target.closest('.course')?.dataset.id;
   if (!id) return;
