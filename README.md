@@ -12,6 +12,7 @@ Keep all files in one folder and double-click `index.html`. To share it with stu
 |---|---|
 | `index.html` | My progress page. Script order matters: data, logic, app. |
 | `courses.html`, `courses.js` | Course list page: every course with its offering per term (read-only). |
+| `sequence.html`, `sequence.js` | Course sequence page: the recommended order from semester 1 to 8 (years 1 to 3), with completed courses highlighted from saved progress. |
 | `style.css` | Appearance: RMIT colours (red `#e60028`, navy `#000054`) in `:root`, plus a compact print layout for the one-page PDF. |
 | `app.js` | User interface: keeps state, saves it, draws the page. Contains no degree rules. |
 | `logic.js` | The degree rules as pure functions (no page code), so they can be tested in Node. |
@@ -57,6 +58,16 @@ The header menu switches between **My progress** and **Course list**.
 ### Course list page
 
 Open **Course list** to browse all courses with their type, credits, majors/minors and a column per term showing Offered, Not offered or Cancelled. Search by code or name, filter by required, elective or a single major/minor, or show only courses offered in a chosen term. It does not change the student's progress.
+
+### Course sequence page
+
+Shows the program plan guide: each required course in its recommended semester, plus the eight open "Combination course" slots (filled in order as the student completes program options or university electives). The order lives in the `SEQUENCE` list in `tools/make_data.py` (copied from `ProgramStructure-BP162VI23.pdf`), which writes it into `data.js` as `sequence`. Prerequisites are not stored yet.
+
+The order is stable but the dates are flexible. `data.js` only knows relative semesters 1 to 8. The page converts them into real terms from a **Starting term** dropdown (three terms a year, via `Logic.termFor` in `logic.js`), and a student can add a **break** before any semester to push the rest back one term. The starting term and breaks are saved with the student's progress (`start` and `breaks`), so they come back on the next visit and travel with an exported file. Terms with no schedule data show "No schedule yet".
+
+The page also has **Major**, **Minor 1** and **Minor 2** dropdowns. Choosing a major (8 courses) or one or two minors (4 each) fills the combination boxes with suggested courses from that group: mandatory courses first, then the group's own order, skipping required courses and repeats. With one minor, the other four boxes stay open. The choices are saved as `major` and `minors`. Suggestions are only a starting order; prerequisites are not checked.
+
+The **Pick courses** panel (right side, below on phones) lists every elective course with search and a filter (all, my major/minors, or one group). Drag a course onto any combination box, or click a box and press **Add** (with no box selected, Add uses the first open one). A **University elective** card can be added any number of times. The × on a box removes its course, and **Reset my choices** returns to the suggestions. Courses the student has already completed, and the university electives count from My progress, fill any boxes left open. Choosing a major or minors overrides the boxes: it clears earlier hand-picked courses and fills them with that group's courses (swap any afterwards). Hand-picked boxes are saved as `slots` (8 entries: empty = follow the suggestion, `none` = left empty, `UNI`, or a course code). A new intake needs no data change, only a different starting term.
 
 ## Updating the data
 

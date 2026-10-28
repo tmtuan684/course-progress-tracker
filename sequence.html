@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Course Sequence</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <div>
+      <h1>Course Sequence</h1>
+      <p id="program"></p>
+    </div>
+    <nav><a href="index.html">My progress</a><a href="courses.html">Course list</a><a href="sequence.html" class="current">Course sequence</a></nav>
+  </header>
+
+  <main class="wide">
+    <div class="seq-controls">
+      <label>Starting term (semester 1)
+        <select id="start" aria-label="Starting term"></select></label>
+      <label>Major <select id="major" aria-label="Major"></select></label>
+      <label>Minor 1 <select id="minor1" aria-label="Minor 1"></select></label>
+      <label>Minor 2 <select id="minor2" aria-label="Minor 2"></select></label>
+      <p class="hint" id="summary"></p>
+      <p class="hint" id="pick-note"></p>
+    </div>
+    <p class="legend"><span class="sw core"></span>Core / STEM / Capstone
+      <span class="sw major"></span>Major course <span class="sw minor"></span>Minor course
+      <span class="sw slot"></span>Open combination slot <span class="sw done"></span>Completed</p>
+    <div class="seq-layout">
+      <div id="sequence"></div>
+      <aside id="pool" class="card" aria-label="Course picker">
+        <div class="pool-head">
+          <h2>Pick courses</h2>
+          <button id="pool-toggle" class="linkbtn" aria-expanded="true" aria-controls="pool-body">Fold ▶</button>
+        </div>
+        <div id="pool-body">
+        <p class="hint">Drag a course onto a combination box, or click a box and then press Add. Without a click, Add uses the first open box.</p>
+        <div class="toolbar">
+          <input id="pool-search" type="search" placeholder="Search code or name">
+          <select id="pool-filter" aria-label="Filter courses"></select>
+        </div>
+        <button id="pool-reset" class="linkbtn">Reset my choices</button>
+        <div id="pool-list"></div>
+        </div>
+      </aside>
+    </div>
+    <p class="hint">Recommended order from the program plan guide. Semesters are the program's own numbering (1 to 8); the terms shown come from the starting term you choose. A break pushes the later semesters back by one term. Not every course runs every term, and terms without schedule data show "No schedule yet".</p>
+  </main>
+
+  <script src="data.js"></script>
+  <script src="logic.js"></script>
+  <script src="sequence.js"></script>
+</body>
+</html>

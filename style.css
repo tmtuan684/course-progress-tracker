@@ -165,3 +165,94 @@ main.wide { display: block; }
 .off.cancelled { background: #fdecef; color: var(--bad); }
 .off.no, .off.none { color: var(--muted); }
 @media print { nav { display: none !important; } }
+
+/* Course sequence page */
+.seq-year { margin-bottom: 14px; }
+.seq-sem { display: grid; grid-template-columns: 110px 1fr; gap: 10px; align-items: start; padding: 8px 0; border-top: 1px solid var(--line); }
+.seq-sem h3 { color: var(--red); margin: 6px 0 0; }
+.seq-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.seq-card { display: flex; flex-direction: column; gap: 2px; padding: 8px 10px; border-radius: 8px; background: #eeeef6; font-size: 13px; }
+.seq-card.big { background: #fde9a8; }
+.seq-card.slot { background: #fff; border: 2px dashed var(--red); }
+.seq-card.done { background: #d9f0d0; border: 1px solid #7bb866; }
+.seq-card.slot.done { border-style: solid; }
+.seq-card small.ok { color: var(--ok); }
+.seq-card small.muted { color: var(--muted); }
+@media (max-width: 700px) { .seq-sem { grid-template-columns: 1fr; } .seq-cards { grid-template-columns: 1fr; } }
+@media print { nav { display: none !important; } }
+
+.seq-controls { display: flex; flex-wrap: wrap; gap: 8px 20px; align-items: center; margin-bottom: 12px; }
+.seq-controls select { padding: 6px 10px; border: 1px solid var(--line); border-radius: 6px; font: inherit; margin-left: 6px; background: #fff7d6; }
+.seq-controls .hint { margin: 0; }
+.term-name { font-weight: 600; color: var(--navy); }
+.linkbtn { background: none; border: none; padding: 2px 0; color: var(--minor); text-decoration: underline; cursor: pointer; font-size: 12px; }
+.linkbtn:hover { background: none; }
+@media print { .linkbtn { display: none; } }
+
+.seq-card.suggest { background: #fdf0f2; border: 1px solid #f2b8c2; }
+.seq-card.suggest.done { background: #d9f0d0; border-color: #7bb866; }
+.seq-controls label { display: inline-flex; align-items: center; gap: 6px; }
+.seq-controls select:disabled { background: #eee; }
+
+/* Distinguish core, major and minor courses on the sequence page */
+.seq-card { border-left: 6px solid transparent; }
+.seq-card.core, .seq-card.big { background: #eeeef6; border-left-color: var(--navy); }
+.seq-card.suggest.major { background: #fff4cf; border: 1px solid #e8c95a; border-left: 6px solid var(--major); }
+.seq-card.suggest.minor { background: #e3effa; border: 1px solid #a9cbea; border-left: 6px solid var(--minor); }
+.seq-card.done { background: #d9f0d0; }
+.seq-card.slot { border-left: 6px dashed var(--red); }
+.kind { align-self: flex-start; font-size: 10px; font-weight: 700; letter-spacing: .4px; text-transform: uppercase; padding: 1px 6px; border-radius: 8px; color: #fff; }
+.kind.core { background: var(--navy); }
+.kind.major { background: #b58500; }
+.kind.minor { background: #2a6ba8; }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 16px; align-items: center; font-size: 13px; margin: 0 0 10px; color: var(--muted); }
+.sw { display: inline-block; width: 14px; height: 14px; border-radius: 3px; margin-right: -10px; border: 1px solid #0003; }
+.sw.core { background: #eeeef6; border-left: 4px solid var(--navy); }
+.sw.major { background: #fff4cf; border-left: 4px solid var(--major); }
+.sw.minor { background: #e3effa; border-left: 4px solid var(--minor); }
+.sw.slot { background: #fff; border: 2px dashed var(--red); }
+.sw.done { background: #d9f0d0; border-color: #7bb866; }
+@media print { .kind, .seq-card { -webkit-print-color-adjust: exact; print-color-adjust: exact; } }
+
+/* Course picker beside the sequence */
+.seq-layout { display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: 16px; align-items: start; }
+@media (max-width: 960px) { .seq-layout { grid-template-columns: 1fr; } }
+#pool { position: sticky; top: 12px; max-height: calc(100vh - 24px); display: flex; flex-direction: column; }
+@media (max-width: 960px) { #pool { position: static; max-height: none; } }
+#pool .toolbar { margin-bottom: 4px; }
+#pool-list { overflow-y: auto; min-height: 0; max-height: 70vh; }
+.pool-item { display: flex; justify-content: space-between; gap: 8px; align-items: center; padding: 7px 4px; border-bottom: 1px solid var(--line); cursor: grab; font-size: 13px; }
+.pool-item:hover { background: #f3f3fa; }
+.pool-item.placed { opacity: .65; }
+.pool-item .chips { display: flex; flex-wrap: wrap; gap: 3px; margin-top: 2px; }
+.add { border: 1px solid var(--red); color: var(--red); background: #fff; border-radius: 6px; padding: 3px 10px; cursor: pointer; }
+.add:hover { background: var(--red); color: #fff; }
+.seq-card { position: relative; }
+.seq-card .x { position: absolute; top: 4px; right: 4px; border: none; background: #0001; color: var(--ink); border-radius: 50%; width: 20px; height: 20px; line-height: 18px; cursor: pointer; padding: 0; }
+.seq-card .x:hover { background: var(--red); color: #fff; }
+.seq-card[data-slot] { cursor: pointer; }
+.seq-card.over { outline: 3px solid var(--red); }
+.seq-card.active { outline: 3px solid var(--navy); outline-offset: 1px; }
+.seq-card.suggest.option { background: #e6f4f1; border: 1px solid #9ccfc5; border-left: 6px solid #2a9d8f; }
+.seq-card.suggest.elective { background: #f1eefa; border: 1px solid #c7bde8; border-left: 6px solid #7a5cc7; }
+.seq-card.suggest.done { background: #d9f0d0; }
+.kind.option { background: #1f7a6e; }
+.kind.elective { background: #6a4bb5; }
+@media print { #pool, .x, .linkbtn { display: none !important; } .seq-layout { display: block; } }
+#pool .toolbar { flex-direction: column; }
+#pool .toolbar input, #pool .toolbar select { width: 100%; min-width: 0; max-width: 100%; flex: none; }
+
+/* Foldable course picker */
+.pool-head { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+.pool-head h2 { margin: 0 0 8px; }
+#pool-body { display: flex; flex-direction: column; min-height: 0; }
+#pool-toggle { font-size: 13px; padding: 4px 8px; color: var(--navy); font-weight: 600; text-decoration: none; border: 1px solid var(--line); border-radius: 6px; background: #fff; }
+#pool-toggle:hover { background: #f3f3fa; }
+.seq-layout.folded { grid-template-columns: minmax(0, 1fr) 46px; }
+.seq-layout.folded #pool { padding: 8px 4px; align-items: center; }
+.seq-layout.folded #pool-body, .seq-layout.folded #pool h2 { display: none; }
+.seq-layout.folded #pool-toggle { writing-mode: vertical-rl; padding: 12px 6px; }
+@media (max-width: 960px) {
+  .seq-layout.folded { grid-template-columns: 1fr; }
+  .seq-layout.folded #pool-toggle { writing-mode: horizontal-tb; padding: 4px 8px; }
+}

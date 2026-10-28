@@ -1056,5 +1056,77 @@ window.DATA = {
    "2026-2": "Yes",
    "2026-3": "Yes"
   }
- }
+ },
+ "sequence": [
+  {
+   "sem": 1,
+   "year": 1,
+   "courses": [
+    "COSC3104",
+    "COSC2174",
+    "INTE2633"
+   ],
+   "open": 0
+  },
+  {
+   "sem": 2,
+   "year": 1,
+   "courses": [
+    "COSC3089",
+    "COSC3107"
+   ],
+   "open": 0
+  },
+  {
+   "sem": 3,
+   "year": 1,
+   "courses": [
+    "COSC3110",
+    "COSC3060"
+   ],
+   "open": 0
+  },
+  {
+   "sem": 4,
+   "year": 2,
+   "courses": [
+    "ISYS3416"
+   ],
+   "open": 2
+  },
+  {
+   "sem": 5,
+   "year": 2,
+   "courses": [
+    "COSC2766"
+   ],
+   "open": 2
+  },
+  {
+   "sem": 6,
+   "year": 2,
+   "courses": [
+    "COSC2767",
+    "COSC2968"
+   ],
+   "open": 1
+  },
+  {
+   "sem": 7,
+   "year": 3,
+   "courses": [
+    "ISYS2101"
+   ],
+   "open": 2
+  },
+  {
+   "sem": 8,
+   "year": 3,
+   "courses": [
+    "COSC2502",
+    "COSC2503"
+   ],
+   "open": 1
+  }
+ ]
 };

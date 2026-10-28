@@ -8,7 +8,7 @@ const groupById = Object.fromEntries(data.groups.map((g) => [g.id, g]));
 const nextTerm = CONFIG.planTerms[0];
 
 // ---------- state (saved in the browser with localStorage) ----------
-const emptyState = () => ({ done: [], uni: 0, plan: {}, name: '' });
+const emptyState = () => ({ done: [], uni: 0, plan: {}, name: '', start: '', breaks: [], major: '', minors: [], slots: Array(8).fill('') });
 let state = load();
 
 function load() {
@@ -28,6 +28,13 @@ function clean(s) {
   if (Array.isArray(s.done)) out.done = [...new Set(s.done.filter((id) => courseById[id]))];
   out.uni = Math.max(0, Math.min(8, Math.floor(Number(s.uni) || 0)));
   out.name = String(s.name || '').slice(0, 80);
+  out.start = /^\d{4}-[1-3]$/.test(s.start) ? s.start : '';
+  out.major = groupById[s.major] && groupById[s.major].type === 'Major' ? s.major : '';
+  if (Array.isArray(s.minors)) out.minors = s.minors.filter((id) => groupById[id] && groupById[id].type === 'Minor').slice(0, 2);
+  if (Array.isArray(s.slots)) s.slots.slice(0, 8).forEach((v, i) => {
+    if (v === 'none' || v === 'UNI' || (courseById[v] && !courseById[v].required)) out.slots[i] = v;
+  });
+  if (Array.isArray(s.breaks)) out.breaks = [...new Set(s.breaks.map(Number).filter((n) => n >= 2 && n <= 8))].sort((x, y) => x - y);
   if (s.plan && typeof s.plan === 'object')
     for (const [id, term] of Object.entries(s.plan))
       if (courseById[id] && CONFIG.planTerms.includes(term)) out.plan[id] = term;

@@ -5,6 +5,7 @@
 
 const CONFIG = {
   planTerms: ['2026-3', '2027-1', '2027-2', '2027-3'], // terms a student can plan into
+  termsPerYear: 3,                                      // RMIT runs three terms a year
   uniCredits: 12,                                       // assumed credit points per university elective
 };
 
@@ -97,7 +98,16 @@ const Logic = (() => {
 
   const offeredIn = (data, id, term) => ((data.offerings[id] || {})[term] || '').startsWith('Yes');
 
-  return { evaluate, planCheck, offeredIn, byId };
+  // Turn a relative semester (1, 2, 3 ...) into a real term such as "2027-1".
+  // start = the term of semester 1; breaks = semesters that are preceded by a skipped term.
+  function termFor(start, sem, breaks) {
+    const [y, t] = String(start).split('-').map(Number);
+    const gaps = (breaks || []).filter((b) => b <= sem).length;
+    const i = y * CONFIG.termsPerYear + (t - 1) + (sem - 1) + gaps;
+    return Math.floor(i / CONFIG.termsPerYear) + '-' + ((i % CONFIG.termsPerYear) + 1);
+  }
+
+  return { evaluate, planCheck, offeredIn, byId, termFor };
 })();
 
 if (typeof module !== 'undefined') module.exports = { Logic, CONFIG }; // lets Node tests import it
