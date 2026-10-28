@@ -256,3 +256,11 @@ main.wide { display: block; }
   .seq-layout.folded { grid-template-columns: 1fr; }
   .seq-layout.folded #pool-toggle { writing-mode: horizontal-tb; padding: 4px 8px; }
 }
+
+/* Notes above the choices; minors share one line */
+.seq-notes { margin-bottom: 8px; }
+.seq-notes .hint { margin: 0 0 4px; }
+.seq-controls { flex-direction: column; align-items: stretch; gap: 8px; }
+.ctl-row { display: flex; flex-wrap: wrap; gap: 8px 20px; align-items: center; }
+.ctl-row label { flex: 0 1 auto; }
+.ctl-row select { max-width: 100%; }

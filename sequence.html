@@ -16,14 +16,21 @@
   </header>
 
   <main class="wide">
-    <div class="seq-controls">
-      <label>Starting term (semester 1)
-        <select id="start" aria-label="Starting term"></select></label>
-      <label>Major <select id="major" aria-label="Major"></select></label>
-      <label>Minor 1 <select id="minor1" aria-label="Minor 1"></select></label>
-      <label>Minor 2 <select id="minor2" aria-label="Minor 2"></select></label>
-      <p class="hint" id="summary"></p>
+    <div class="seq-notes">
+      <p class="hint">Recommended order from the program plan guide. Semesters are the program's own numbering (1 to 8); the terms shown come from the starting term you choose. A break pushes the later semesters back by one term. Not every course runs every term, and terms without schedule data show "No schedule yet".</p>
       <p class="hint" id="pick-note"></p>
+    </div>
+    <div class="seq-controls">
+      <div class="ctl-row">
+        <label>Starting term (semester 1)
+          <select id="start" aria-label="Starting term"></select></label>
+        <label>Major <select id="major" aria-label="Major"></select></label>
+      </div>
+      <div class="ctl-row">
+        <label>Minor 1 <select id="minor1" aria-label="Minor 1"></select></label>
+        <label>Minor 2 <select id="minor2" aria-label="Minor 2"></select></label>
+      </div>
+      <p class="hint" id="summary"></p>
     </div>
     <p class="legend"><span class="sw core"></span>Core / STEM / Capstone
       <span class="sw major"></span>Major course <span class="sw minor"></span>Minor course
@@ -46,7 +53,6 @@
         </div>
       </aside>
     </div>
-    <p class="hint">Recommended order from the program plan guide. Semesters are the program's own numbering (1 to 8); the terms shown come from the starting term you choose. A break pushes the later semesters back by one term. Not every course runs every term, and terms without schedule data show "No schedule yet".</p>
   </main>
 
   <script src="data.js"></script>
