@@ -240,7 +240,7 @@ $('#import').addEventListener('change', (e) => {
 });
 
 $('#reset').addEventListener('click', () => {
-  if (confirm('Clear all progress and plans?')) { state = emptyState(); $('#name').value = ''; save(); renderAll(); }
+  if (confirm('Restart the course planner? This clears your ticked courses, plans, name and the course sequence choices.')) { state = emptyState(); $('#name').value = ''; save(); try { localStorage.removeItem('course-planner.pool-folded'); } catch (e) { /* nothing to clear */ } renderAll(); }
 });
 
 // ---------- start ----------

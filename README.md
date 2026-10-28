@@ -53,7 +53,7 @@ The header menu switches between **My progress** and **Course list**.
 3. Use the search box and filter (all, not completed, offered next term, required, or a single major/minor) to find courses.
 4. Pick a term in **Plan for…** to check the course is offered. The Semester plan section shows courses, credits and problems per term.
 5. **Download PDF report** opens the print dialog with a one-page report (name, date, progress, completed courses, semester plan); choose "Save as PDF". Type your name in the box under the header first.
-6. **Export progress** saves a JSON file; **Import** loads it back (for another computer or a backup). **Reset** clears everything.
+6. **Export progress** saves a JSON file; **Import** loads it back (for another computer or a backup). **Restart planner** (on both My progress and Course sequence) clears everything: ticks, plans, name, starting term, breaks, major/minors and chosen courses.
 
 ### Course list page
 
