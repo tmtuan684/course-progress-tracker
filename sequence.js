@@ -32,7 +32,10 @@ let slots = Array(SLOTS).fill('');
 if (Array.isArray(saved.slots)) saved.slots.slice(0, SLOTS).forEach((v, i) => {
   if (v === 'none' || v === 'UNI' || (courseById[v] && !courseById[v].required)) slots[i] = v;
 });
-let active = -1;                           // slot picked by clicking, waiting for a course
+let active = -1;
+const picked = new Set();                  // courses selected in the picker (click, Shift+click for a range)
+let anchor = null;                         // last course clicked, start of a Shift range
+let visibleIds = [];                       // picker rows currently shown, in order                           // slot picked by clicking, waiting for a course
 
 const electives = data.courses.filter((c) => !c.required);
 
@@ -73,7 +76,7 @@ function suggestions() {
     const take = pool.slice(0, g.need);
     take.forEach((id) => { used.add(id); list.push({ id, group: g }); });
     if (g.listMissing) notes.push(`${g.name} has no published course list.`);
-    else if (take.length < g.need) notes.push(`${g.name} offers only ${take.length} course(s) that are not already required, so ${g.need - take.length} more box(es) stay open.`);
+    else if (take.length < g.need) notes.push(`${g.name} offers only ${take.length} course(s) that are not already core courses, so ${g.need - take.length} more box(es) stay open.`);
     else if (g.members.length > take.length) notes.push(`${g.name} lists ${g.members.length} courses; ${g.need} are suggested. Swap any of them using the course picker.`);
   }
   return { list, notes };
@@ -158,7 +161,7 @@ function render() {
 
   const filled = res.slots.filter((o) => o.kind !== 'open').length;
   const last = Logic.termFor(start, 8, breaks);
-  $('#summary').textContent = `${ev.required.done} of ${ev.required.total} required courses completed; ` +
+  $('#summary').textContent = `${ev.required.done} of ${ev.required.total} core courses completed; ` +
     `${filled} of ${SLOTS} combination boxes filled. Planned finish: ${last}.`;
   $('#pick-note').textContent = res.notes.join(' ') || (res.hasSug
     ? 'Suggested courses follow the group\'s own listing order, mandatory ones first. Prerequisites are not checked.'
@@ -183,31 +186,49 @@ function renderPool(placedSem) {
     if (f.startsWith('group:')) return c.groups.includes(f.slice(6));
     return true;
   });
-  const uniRow = `<div class="pool-item" draggable="true" data-id="UNI">
+  const showUni = f === 'all' && !q;
+  visibleIds = (showUni ? ['UNI'] : []).concat(list.map((c) => c.id));
+  [...picked].forEach((id) => { if (!visibleIds.includes(id)) picked.delete(id); });
+  const uniRow = `<div class="pool-item ${picked.has('UNI') ? 'selected' : ''}" draggable="true" data-id="UNI">
     <div><strong>University elective</strong><div class="chips"><span class="chip muted">any course from other RMIT programs</span></div></div>
     <button class="add" data-add="UNI">Add</button></div>`;
   const rows = list.map((c) => {
     const where = placedSem[c.id];
     const chips = c.groups.map((id) => `<span class="chip ${groupById[id].type.toLowerCase()}">${esc(groupLabel(groupById[id]))}</span>`).join('');
-    return `<div class="pool-item ${where ? 'placed' : ''}" draggable="true" data-id="${esc(c.id)}">
+    return `<div class="pool-item ${where ? 'placed' : ''} ${picked.has(c.id) ? 'selected' : ''}" draggable="true" data-id="${esc(c.id)}">
       <div><strong>${esc(c.id)}</strong> ${esc(c.name)} <small>${c.credits} cp</small>
         <div class="chips">${chips}${where ? `<span class="chip ok">in semester ${where}</span>` : ''}${state.done.includes(c.id) ? '<span class="chip req">completed</span>' : ''}</div></div>
       <button class="add" data-add="${esc(c.id)}">${where ? 'Move' : 'Add'}</button></div>`;
   }).join('');
-  $('#pool-list').innerHTML = (f === 'all' && !q ? uniRow : '') + (rows || '<p class="empty">No courses match.</p>');
+  $('#pool-list').innerHTML = (showUni ? uniRow : '') + (rows || '<p class="empty">No courses match.</p>');
+  $('#pool-selection').innerHTML = picked.size
+    ? `<strong>${picked.size} selected</strong> <button class="add" id="add-selected">Add to boxes</button> <button class="linkbtn" id="clear-selected">Clear</button>`
+    : '<span class="muted">Click a course to select it. Shift+click selects a range.</span>';
 }
 
 // ---------- placing courses ----------
-function place(id, idx) {
+function selectedIds() { return ['UNI', ...electives.map((c) => c.id)].filter((id) => picked.has(id)); }
+
+// Put one or several courses into successive boxes. From a chosen box (clicked or dropped on) they replace what is
+// there; otherwise they go into the open boxes in order.
+function placeMany(ids, idx) {
   if (idx === undefined || idx < 0) idx = active;
-  if (idx < 0) idx = lastResolved.findIndex((o) => o.kind === 'open');
-  if (idx < 0) { $('#pick-note').textContent = 'All combination boxes are full. Remove one with the × button, or drop the course onto a box to replace it.'; return; }
-  if (id !== 'UNI') slots = slots.map((v) => (v === id ? '' : v));   // a course sits in one box only
-  if (id !== 'UNI') slots = slots.map((v, i) => (v === '' && lastResolved[i] && lastResolved[i].id === id ? 'none' : v));
-  slots[idx] = id;
-  active = -1;
+  const targets = idx >= 0
+    ? ids.map((_, k) => idx + k).filter((n) => n < SLOTS)
+    : lastResolved.map((o, n) => (o.kind === 'open' ? n : -1)).filter((n) => n >= 0).slice(0, ids.length);
+  if (!targets.length) { $('#pick-note').textContent = 'All combination boxes are full. Remove one with the × button, or drop the course onto a box to replace it.'; return; }
+  const used = ids.slice(0, targets.length);
+  used.forEach((id) => {
+    if (id === 'UNI') return;
+    slots = slots.map((v) => (v === id ? '' : v));                   // a course sits in one box only
+    slots = slots.map((v, n) => (v === '' && lastResolved[n] && lastResolved[n].id === id ? 'none' : v));
+  });
+  used.forEach((id, k) => { slots[targets[k]] = id; });
+  active = -1; picked.clear(); anchor = null;
   updateSaved({ slots }); render();
+  if (used.length < ids.length) $('#pick-note').textContent = `${ids.length - used.length} selected course(s) did not fit in the remaining boxes.`;
 }
+const place = (id, idx) => placeMany([id], idx);
 
 // ---------- controls ----------
 const groupOpts = (type, current, none) => `<option value="">${none}</option>` +
@@ -251,11 +272,42 @@ $('#sequence').addEventListener('click', (e) => {
 });
 
 // drag and drop (mouse); touch screens use the Add button instead
-$('#pool-list').addEventListener('click', (e) => { const b = e.target.closest('[data-add]'); if (b) place(b.dataset.add); });
+$('#pool-list').addEventListener('mousedown', (e) => { if (e.shiftKey) e.preventDefault(); });   // no text selection on Shift+click
+$('#pool-list').addEventListener('click', (e) => {
+  const b = e.target.closest('[data-add]');
+  if (b) {
+    const id = b.dataset.add;
+    if (picked.has(id) && picked.size > 1) placeMany(selectedIds()); else place(id);
+    return;
+  }
+  const row = e.target.closest('.pool-item');
+  if (!row) return;
+  const id = row.dataset.id;
+  if (e.shiftKey && anchor && visibleIds.includes(anchor)) {          // range from the last clicked course
+    const a = visibleIds.indexOf(anchor), z = visibleIds.indexOf(id);
+    const range = visibleIds.slice(Math.min(a, z), Math.max(a, z) + 1);
+    if (!(e.ctrlKey || e.metaKey)) picked.clear();
+    range.forEach((x) => picked.add(x));
+  } else if (e.ctrlKey || e.metaKey) {                                // add or remove one course
+    if (picked.has(id)) picked.delete(id); else picked.add(id);
+    anchor = id;
+  } else {                                                            // plain click: select only this one (or deselect it)
+    const only = picked.size === 1 && picked.has(id);
+    picked.clear();
+    if (!only) picked.add(id);
+    anchor = id;
+  }
+  render();
+});
+$('#pool').addEventListener('click', (e) => {
+  if (e.target.id === 'add-selected') placeMany(selectedIds());
+  if (e.target.id === 'clear-selected') { picked.clear(); anchor = null; render(); }
+});
 $('#pool-list').addEventListener('dragstart', (e) => {
   const item = e.target.closest('.pool-item');
   if (!item) return;
-  e.dataTransfer.setData('text/plain', item.dataset.id);
+  const id = item.dataset.id;
+  e.dataTransfer.setData('text/plain', picked.has(id) && picked.size > 1 ? selectedIds().join(',') : id);   // drag the whole selection
   e.dataTransfer.effectAllowed = 'copy';
 });
 $('#sequence').addEventListener('dragover', (e) => {
@@ -269,8 +321,9 @@ $('#sequence').addEventListener('drop', (e) => {
   const box = e.target.closest('[data-slot]');
   if (!box) return;
   e.preventDefault();
-  const id = e.dataTransfer.getData('text/plain');
-  if (id === 'UNI' || (courseById[id] && !courseById[id].required)) place(id, Number(box.dataset.slot));
+  const ids = e.dataTransfer.getData('text/plain').split(',').filter((id) => id === 'UNI' || (courseById[id] && !courseById[id].required));
+  box.classList.remove('over');
+  if (ids.length) placeMany(ids, Number(box.dataset.slot));
 });
 
 // fold / unfold the course picker (remembered in this browser)
@@ -285,6 +338,12 @@ function setFolded(v) {
   b.textContent = v ? '◀ Pick courses' : 'Fold ▶';
   if (v && active >= 0) { active = -1; render(); }
 }
+// restart everything: ticks, plans, name, starting term, breaks, major/minors and hand-picked boxes
+$('#restart').addEventListener('click', () => {
+  if (!confirm('Restart the course planner? This clears your ticked courses, plans, starting term, breaks, major/minors and chosen courses.')) return;
+  try { localStorage.removeItem(STORAGE_KEY); localStorage.removeItem('course-planner.pool-folded'); } catch (e) { /* nothing to clear */ }
+  location.reload();
+});
 $('#pool-toggle').addEventListener('click', () => setFolded(!folded));
 setFolded(folded);
 render();

@@ -30,7 +30,7 @@ function render() {
     data.terms.map((t) => `<th>${esc(t)}</th>`).join('')}</tr></thead>`;
   const body = list.map((c) => `<tr>
     <td><strong>${esc(c.id)}</strong></td><td>${esc(c.name)}</td><td>${c.credits}</td>
-    <td>${c.required ? '<span class="chip req">' + esc(c.category || 'Required') + '</span>' : 'Elective'}</td>
+    <td>${c.required ? '<span class="chip req">' + esc(c.category || 'Core') + '</span>' : 'Elective'}</td>
     <td>${c.groups.map((id) => `<span class="chip ${groupById[id].type.toLowerCase()}">${esc(groupLabel(groupById[id]))}</span>`).join(' ')}</td>
     ${data.terms.map((t) => offeringCell(c, t)).join('')}</tr>`).join('');
   $('#table').innerHTML = head + `<tbody>${body}</tbody>`;
@@ -38,7 +38,7 @@ function render() {
 }
 
 $('#program').textContent = data.program;
-$('#filter').innerHTML = [['all', 'All courses'], ['required', 'Required courses'], ['elective', 'Electives only'],
+$('#filter').innerHTML = [['all', 'All courses'], ['required', 'Core courses'], ['elective', 'Electives only'],
   ...data.groups.map((g) => ['group:' + g.id, groupLabel(g)])]
   .map(([v, l]) => `<option value="${esc(v)}">${esc(l)}</option>`).join('');
 $('#offered').innerHTML = '<option value="any">Offered in any term</option>' +

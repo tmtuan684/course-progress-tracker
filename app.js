@@ -67,7 +67,7 @@ function renderProgress() {
 
   $('#progress').innerHTML = `
     <div class="card ${ev.required.done === ev.required.total ? 'done' : ''}">
-      <h2>Required courses</h2>
+      <h2>Core courses</h2>
       <div class="row"><span>Core / STEM / Capstone</span><strong>${ev.required.done} / ${ev.required.total}</strong></div>
       ${bar(ev.required.done, ev.required.total, 'required')}
     </div>
@@ -85,7 +85,7 @@ function renderProgress() {
 
     <div class="card">
       <h2>Credit points</h2>
-      <div class="row"><span>Required courses</span><strong>${ev.credits.required}</strong></div>
+      <div class="row"><span>Core courses</span><strong>${ev.credits.required}</strong></div>
       <div class="row"><span>Program options</span><strong>${ev.credits.programOptions}</strong></div>
       <div class="row"><span>University electives</span><strong>${ev.credits.university}</strong></div>
       <div class="row total"><span>Total</span><strong>${ev.credits.total}</strong></div>
@@ -95,7 +95,7 @@ function renderProgress() {
 // ---------- course list ----------
 function filterOptions() {
   const opts = [['all', 'All courses'], ['todo', 'Not completed'], ['next', `Offered ${nextTerm} (not completed)`],
-    ['required', 'Required courses']];
+    ['required', 'Core courses']];
   data.groups.forEach((g) => opts.push(['group:' + g.id, groupLabel(g)]));
   return opts;
 }
@@ -123,7 +123,7 @@ function renderList() {
     const done = state.done.includes(c.id);
     const term = state.plan[c.id] || '';
     const check = Logic.planCheck(data, state, c.id, term);
-    const chips = (c.required ? '<span class="chip req">required</span>' : '') +
+    const chips = (c.required ? '<span class="chip req">core</span>' : '') +
       c.groups.map((id) => `<span class="chip ${groupById[id].type.toLowerCase()}">${esc(groupLabel(groupById[id]))}</span>`).join('');
     return `<div class="course ${done ? 'done' : ''}" data-id="${esc(c.id)}">
       <input type="checkbox" class="tick" aria-label="Completed: ${esc(c.name)}" ${done ? 'checked' : ''}>
