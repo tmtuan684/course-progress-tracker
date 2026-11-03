@@ -1,4 +1,4 @@
-# Course Planner (RMIT Bachelor of IT, BP162VI23, Saigon South)
+# Course Planner (RMIT Bachelor of IT, Saigon South: BP162VI23 and BP162OPVI)
 
 A small web app where a student ticks completed courses, sees progress toward the degree, and plans courses for upcoming semesters. It is plain HTML, CSS and JavaScript with no framework, no build step and no server. It does the same job as `Course_List.xlsx`, but handles course-selection rules that were awkward in Excel.
 
@@ -16,8 +16,10 @@ Keep all files in one folder and double-click `index.html`. To share it with stu
 | `style.css` | Appearance: RMIT colours (red `#e60028`, navy `#000054`) in `:root`, plus a compact print layout for the one-page PDF. |
 | `ui.js` | Shared by every page: small page helpers, course chips and filters, and reading/saving the student's progress in the browser. |
 | `logic.js` | The degree rules as pure functions (no page code), so they can be tested in Node. |
-| `data.js` | All course data, generated from the Excel file. Sets the global `window.DATA`, which every page reads. |
-| `tools/make_data.py` | Regenerates `data.js` from `Course_List.xlsx`. Not needed to run the site. |
+| `programs.html`, `programs.js` | The first page: the student chooses a program. Every other page redirects here until a program is chosen. |
+| `programs/*.js` | One data file per program (`bp162vi23.js`, `bp162opvi.js`), each adding itself to `window.PROGRAMS`. |
+| `data/make_data.py` | Regenerates `programs/bp162vi23.js` from `Course_List.xlsx` and the handbook text. Not needed to run the site. |
+| `data/make_opvi.py` | Regenerates `programs/bp162opvi.js` from the course lists written inside it. |
 
 Every page loads its scripts in this order: `data.js`, `logic.js`, `ui.js`, then its own script.
 
@@ -102,3 +104,22 @@ For a new academic year, also check:
 - A "target group" view listing the remaining courses of a chosen major or minor with their availability.
 - More terms and the Hanoi campus (change which code column `make_data.py` reads).
 - Automated tests for `logic.js` using Node (it exports `Logic` and `CONFIG`).
+
+
+## Several programs
+
+The student chooses a program on `programs.html`; the choice is kept in the browser (`course-planner.program`) and shown in each page's header. **Change program** in the menu returns to the chooser. Progress is saved per program (`course-planner.v1` for BP162VI23, `course-planner.v1.BP162OPVI` for the other), so switching never loses ticks.
+
+Each program file carries its own `ruleset`, labels, credit total, handbook link, sequence and offering schedule:
+
+- `electives8` (BP162VI23): the original rules, with a major or minors.
+- `streams` (BP162OPVI): 13 core courses (11 electives, 288 credit points). Route A is 3 IT / Advanced IT options + one minor stream (4 courses) + 2 general options; Route B is 7 IT / Advanced IT options + 2 general options; both need 2 university electives. A course counts once, so a course that is both an IT option and a stream course fills only one place (this is checked with a small matching routine in `logic.js`). The handbook lists the same 14 courses as IT options and Advanced IT options, so they are one list.
+
+To add a third program, create `programs/<code>.js` the same way (copy `data/make_opvi.py` and edit the lists), load it in the three page files and `programs.html`, and add its rule set to `logic.js` if it needs a new one.
+
+### BP162OPVI assumptions to check
+
+- No program plan guide was available, so the sequence is a suggestion: three courses a semester, shaped by the earlier BP162OPVI planning workbook.
+- Web Programming and Electronic Commerce and Enterprise Systems had no course code in the handbook text; they use `WEBPROG-TBC` and `ECES-TBC` until the real codes are known.
+- Courses with no teaching period in the handbook show as not in the schedule.
+- Prerequisites are not recorded yet, so the course list links to the handbook.

@@ -12,7 +12,7 @@
       <h1>Course Sequence</h1>
       <p id="program"></p>
     </div>
-    <nav><a href="index.html">My progress</a><a href="courses.html">Course list</a><a href="sequence.html" class="current">Course sequence</a></nav>
+    <nav><a href="index.html">My progress</a><a href="courses.html">Course list</a><a href="sequence.html" class="current">Course sequence</a><a href="programs.html">Change program</a></nav>
     <div class="actions">
       <button id="restart" class="danger">Restart planner</button>
     </div>
@@ -21,6 +21,7 @@
   <main class="wide">
     <div class="seq-notes">
       <p class="hint">Recommended order from the program plan guide. Semesters are the program's own numbering (1 to 8); the terms shown come from the starting term you choose. A break pushes the later semesters back by one term. Not every course runs every term, and terms without schedule data show "No schedule yet".</p>
+      <p class="hint" id="seq-note"></p>
       <p class="hint" id="pick-note"></p>
     </div>
     <div class="seq-controls">
@@ -59,7 +60,8 @@
     </div>
   </main>
 
-  <script src="data.js"></script>
+  <script src="programs/bp162vi23.js"></script>
+  <script src="programs/bp162opvi.js"></script>
   <script src="logic.js"></script>
   <script src="ui.js"></script>
   <script src="sequence.js"></script>

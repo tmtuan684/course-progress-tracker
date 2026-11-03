@@ -27,18 +27,18 @@ function renderProgress() {
   $('#progress').innerHTML = `
     <div class="card ${ev.required.done === ev.required.total ? 'done' : ''}">
       <h2>Core courses</h2>
-      <div class="row"><span>Core / STEM / Capstone</span><strong>${ev.required.done} / ${ev.required.total}</strong></div>
+      <div class="row"><span>${esc(data.labels.core)}</span><strong>${ev.required.done} / ${ev.required.total}</strong></div>
       ${bar(ev.required.done, ev.required.total, 'required')}
     </div>
 
     <div class="card ${ev.electivesMet ? 'done' : ''}">
-      <h2>Electives (8 courses)</h2>
+      <h2>${esc(data.labels.electives)}</h2>
       <ul class="pathways">${ev.pathways.map((p) =>
         `<li class="${p.met ? 'met' : ''}"><span>${p.met ? '✓' : '○'}</span> ${esc(p.label)}</li>`).join('')}</ul>
       <p class="result">${ev.electivesMet ? 'Elective requirement met' : 'Elective requirement not met yet'}</p>
-      <label class="uni">University electives completed
-        <input id="uni" type="number" min="0" max="${CONFIG.maxUni}" value="${state.uni}"></label>
-      <p class="hint">Program options completed (each course counted once): <strong>${ev.D}</strong></p>
+      <label class="uni">${esc(data.labels.uni)}
+        <input id="uni" type="number" min="0" max="${data.maxUni || CONFIG.maxUni}" value="${state.uni}"></label>
+      <p class="hint">${esc(data.labels.options)}: <strong>${ev.D}</strong></p>
       <ul class="groups">${groupRows}</ul>
     </div>`;
 
@@ -48,12 +48,12 @@ function renderProgress() {
     <span class="credit"><small>Core</small><strong>${ev.credits.required}</strong></span>
     <span class="credit"><small>Program options</small><strong>${ev.credits.programOptions}</strong></span>
     <span class="credit"><small>University electives</small><strong>${ev.credits.university}</strong></span>
-    <span class="credit total"><small>Total</small><strong>${ev.credits.total} / ${CONFIG.programCredits}</strong></span>`;
+    <span class="credit total"><small>Total</small><strong>${ev.credits.total} / ${PROGRAM_CREDITS}</strong></span>`;
 }
 
 // ---------- course list ----------
 const filterOptions = () => [['all', 'All courses'], ['todo', 'Not completed'], ['next', `Offered ${nextTerm} (not completed)`],
-  ['required', 'Core courses'], ...groupFilterPairs()];
+  ['required', 'Core courses'], ...groupFilterPairs(), ...listFilterPairs()];
 
 function matches(c, filter, q) {
   if (!textMatch(c, q)) return false;
@@ -61,6 +61,8 @@ function matches(c, filter, q) {
   if (filter === 'todo') return !done;
   if (filter === 'next') return !done && Logic.offeredIn(data, c.id, nextTerm);
   if (filter === 'required') return c.required;
+  const l = filterList(filter);
+  if (l) return (c.lists || []).includes(l);
   const g = filterGroup(filter);
   return g ? c.groups.includes(g) : true;
 }
@@ -177,7 +179,7 @@ $('#search').addEventListener('input', renderList);
 
 $('#export').addEventListener('click', () => {
   const blob = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' });
-  const a = Object.assign(document.createElement('a'), { href: URL.createObjectURL(blob), download: 'my-course-progress.json' });
+  const a = Object.assign(document.createElement('a'), { href: URL.createObjectURL(blob), download: `my-course-progress-${data.code}.json` });
   a.click();
   URL.revokeObjectURL(a.href);
 });

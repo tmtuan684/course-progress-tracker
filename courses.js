@@ -1,5 +1,5 @@
 // courses.js - read-only table of all courses and the terms they are offered.
-const HANDBOOK_URL = 'https://handbook.rmit.edu.au/ords/r/rmit/catalogue/program?p5_code=BP162VI23';
+const HANDBOOK_URL = data.handbookUrl;
 
 const OFFERING_CELL = {
   yes: '<td class="off yes">Offered</td>',
@@ -27,6 +27,8 @@ function matches(c, filter, offered, q) {
   if (!textMatch(c, q)) return false;
   if (filter === 'required' && !c.required) return false;
   if (filter === 'elective' && c.required) return false;
+  const l = filterList(filter);
+  if (l && !(c.lists || []).includes(l)) return false;
   const g = filterGroup(filter);
   if (g && !c.groups.includes(g)) return false;
   if (offered !== 'any' && !Logic.offeredIn(data, c.id, offered)) return false;
@@ -50,7 +52,7 @@ function render() {
 
 $('#program').textContent = data.program;
 $('#filter').innerHTML = optionsHtml([['all', 'All courses'], ['required', 'Core courses'], ['elective', 'Electives only'],
-  ...groupFilterPairs()]);
+  ...groupFilterPairs(), ...listFilterPairs()]);
 $('#offered').innerHTML = optionsHtml([['any', 'Offered in any term'], ...data.terms.map((t) => [t, 'Offered in ' + t])]);
 ['input', 'change'].forEach((ev) => document.querySelectorAll('.toolbar > *').forEach((el) => el.addEventListener(ev, render)));
 render();

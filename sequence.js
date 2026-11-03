@@ -5,7 +5,12 @@ if (!Array.isArray(data.sequence)) {
   document.querySelector('#sequence').innerHTML = '<p class="card warn">This page needs the course sequence in data.js. Replace data.js with the latest version, or regenerate it with tools/make_data.py.</p>';
   throw new Error('data.js has no sequence');
 }
-const SLOTS = CONFIG.slots;
+const SLOTS = SLOT_COUNT;
+const STREAMS = data.ruleset === 'streams';
+// label and stream flag for each open box, in order (programs without labels get plain boxes)
+const slotMeta = data.sequence.flatMap((sem) => Array.from({ length: sem.open }, (_, k) => (sem.slots && sem.slots[k]) || {}));
+const streamRank = {};                      // box index -> position among the boxes a stream/major fills
+slotMeta.reduce((n, m, i) => { if (!STREAMS || m.stream) { streamRank[i] = n; return n + 1; } return n; }, 0);
 const updateSaved = (changes) => saveState({ ...loadState(), ...changes });   // keep the rest of the saved progress
 
 const saved = loadState();
@@ -78,7 +83,7 @@ function resolveSlots() {
     if (v === 'UNI') return { kind: 'uni', manual: true };
     if (v === 'none') return { kind: 'open' };
     if (courseById[v]) return { kind: 'course', id: v, manual: true, group: chosen.find((g) => g.members.includes(v)) || null };
-    const s = sug.list[i];
+    const s = streamRank[i] === undefined ? null : sug.list[streamRank[i]];
     if (s && !manualIds.has(s.id)) return { kind: 'course', id: s.id, manual: false, group: s.group };
     return { kind: 'open' };
   });
@@ -112,7 +117,7 @@ function slotCard(info, i, term) {
       <strong>Any RMIT course</strong><span>Elective from another program</span>
       <small>${info.done ? 'completed' : 'chosen by you'}</small></div>`;
   }
-  return `<div class="seq-card slot ${active === i ? 'active' : ''}" ${cls}><strong>Combination course</strong>
+  return `<div class="seq-card slot ${active === i ? 'active' : ''}" ${cls}><strong>${esc(slotMeta[i].label || 'Combination course')}</strong>
     <span>Drag a course here, or click this box and press Add on a course</span><small>${active === i ? 'selected' : 'open'}</small></div>`;
 }
 
@@ -144,9 +149,9 @@ function render() {
   }).join('');
 
   const filled = res.slots.filter((o) => o.kind !== 'open').length;
-  const last = Logic.termFor(start, CONFIG.semesters, breaks);
+  const last = Logic.termFor(start, SEMESTERS, breaks);
   $('#summary').textContent = `${ev.required.done} of ${ev.required.total} core courses completed; ` +
-    `${filled} of ${SLOTS} combination boxes filled. Planned finish: ${last}.`;
+    `${filled} of ${SLOTS} boxes filled. Planned finish: ${last}.`;
   $('#pick-note').textContent = res.notes.join(' ') || (res.hasSug
     ? 'Suggested courses follow the group\'s own listing order, mandatory ones first. Prerequisites are not checked.'
     : 'Pick a major or minors to get suggestions, or fill the boxes yourself from the course picker.');
@@ -154,7 +159,8 @@ function render() {
 }
 
 // ---------- course picker ----------
-const poolFilterOptions = () => optionsHtml([['all', 'All elective courses'], ['chosen', 'My major / minors'], ...groupFilterPairs()]);
+const poolFilterOptions = () => optionsHtml([['all', 'All elective courses'], ['chosen', STREAMS ? 'My minor stream' : 'My major / minors'],
+  ...groupFilterPairs(), ...listFilterPairs()]);
 
 function renderPool(placedSem) {
   const q = $('#pool-search').value.trim().toLowerCase();
@@ -163,6 +169,8 @@ function renderPool(placedSem) {
   const list = electives.filter((c) => {
     if (!textMatch(c, q)) return false;
     if (f === 'chosen') return chosenIds.has(c.id);
+    const l = filterList(f);
+    if (l) return (c.lists || []).includes(l);
     const g = filterGroup(f);
     return g ? c.groups.includes(g) : true;
   });
@@ -214,6 +222,12 @@ const place = (id, idx) => placeMany([id], idx);
 const groupOpts = (type, current, none) => `<option value="">${none}</option>` +
   data.groups.filter((g) => g.type === type).map((g) => `<option value="${esc(g.id)}" ${g.id === current ? 'selected' : ''}>${esc(g.name)}</option>`).join('');
 function drawChoices() {
+  if (STREAMS) {                                                  // one choice only: the minor stream
+    $('#major').closest('label').style.display = $('#minor2').closest('label').style.display = 'none';
+    $('#minor1').closest('label').firstChild.textContent = 'Minor stream ';
+    $('#minor1').innerHTML = groupOpts('Minor', minors[0], 'No stream (IT route)');
+    return;
+  }
   $('#major').innerHTML = groupOpts('Major', major, 'No major');
   $('#minor1').innerHTML = groupOpts('Minor', minors[0], 'No minor');
   $('#minor2').innerHTML = groupOpts('Minor', minors[1], 'No second minor');
@@ -221,14 +235,15 @@ function drawChoices() {
   $('#minor1').title = $('#minor2').title = major ? 'Choose "No major" to pick minors' : '';
 }
 function choose() {
-  major = $('#major').value;
-  minors = major ? [] : [$('#minor1').value, $('#minor2').value].filter(Boolean).filter((id, i, a) => a.indexOf(id) === i);
+  major = STREAMS ? '' : $('#major').value;
+  minors = STREAMS ? [$('#minor1').value].filter(Boolean) : major ? [] : [$('#minor1').value, $('#minor2').value].filter(Boolean).filter((id, i, a) => a.indexOf(id) === i);
   // choosing a major or minors replaces whatever was in the combination boxes with that group's courses
   if (picks().length) { slots = Array(SLOTS).fill(''); active = -1; }
   updateSaved({ major, minors, slots }); drawChoices(); render();
 }
 
 $('#program').textContent = data.program;
+if (data.sequenceNote) $('#seq-note').textContent = data.sequenceNote;
 $('#start').innerHTML = startOptions().map((t) => `<option ${t === start ? 'selected' : ''}>${esc(t)}</option>`).join('');
 $('#pool-filter').innerHTML = poolFilterOptions();
 drawChoices();

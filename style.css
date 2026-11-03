@@ -252,3 +252,11 @@ main.wide { display: block; }
   .seq-layout { display: block; }
   .bar, .bar div, .chip, .course.done, .kind, .seq-card { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
 }
+
+/* program chooser */
+.choose-title { margin: 1rem 0 .25rem; }
+.program-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem; margin-top: 1rem; }
+.program.current { outline: 2px solid var(--red, #e60028); }
+.program h3 { margin: 0 0 .25rem; color: var(--navy, #000054); }
+.program button.choose { background: var(--red, #e60028); color: #fff; border: 0; border-radius: 4px; padding: .5rem .9rem; cursor: pointer; font: inherit; }
+.program button.choose:hover { filter: brightness(.92); }

@@ -48,7 +48,59 @@ const Logic = (() => {
     return union.size >= a.need + b.need;
   }
 
+  // Largest number of courses that can be placed in distinct slots (simple augmenting paths).
+  // slots = array of Sets of course ids that may fill that slot.
+  function maxMatch(slots, ids) {
+    const owner = {};                                       // course id -> slot index
+    const tryFill = (i, seen) => {
+      for (const id of ids) {
+        if (!slots[i].has(id) || seen.has(id)) continue;
+        seen.add(id);
+        if (owner[id] === undefined || tryFill(owner[id], seen)) { owner[id] = i; return true; }
+      }
+      return false;
+    };
+    return slots.reduce((n, _, i) => n + (tryFill(i, new Set()) ? 1 : 0), 0);
+  }
+
+  // Programs with IT options, a minor stream, general options and university electives (BP162OPVI).
+  // Route A: 3 IT options + 4 stream courses + 2 general; Route B: 7 IT options + 2 general; both + 2 university electives.
+  function evaluateStreams(data, state) {
+    const courses = byId(data);
+    const done = new Set(state.done);
+    const elective = electiveDone(data, done);
+    const ids = [...elective];
+    const listSet = (name) => new Set(data.courses.filter((c) => !c.required && (c.lists || []).includes(name)).map((c) => c.id));
+    const IT = listSet('it'), GEN = listSet('general');
+    const statuses = data.groups.map((g) => groupStatus(g, elective, done));
+    const U = Number(state.uni) || 0;
+    const uniNeed = Math.max(0, 2 - U);
+    const fill = (parts) => parts.flatMap(([set, n]) => Array(n).fill(set));
+    const total = (slots) => slots.length;
+    const routeA = statuses.map((s) => {
+      const slots = fill([[IT, 3], [new Set(s.group.members), 4], [GEN, 2]]);
+      const left = total(slots) - maxMatch(slots, ids) + uniNeed;
+      return { s, left };
+    });
+    const bestA = routeA.reduce((a, b) => (b.left < a.left ? b : a), routeA[0]);
+    const slotsB = fill([[IT, 7], [GEN, 2]]);
+    const leftB = total(slotsB) - maxMatch(slotsB, ids) + uniNeed;
+    const note = (left) => (left ? ` (${left} more needed)` : '');
+    const pathways = [
+      { id: 1, label: `Minor stream route: 3 IT options + 4 stream courses + 2 general options + 2 university electives${bestA.left ? ` - closest: ${bestA.s.group.name}${note(bestA.left)}` : ` - ${bestA.s.group.name}`}`, met: bestA.left === 0 },
+      { id: 2, label: `IT route: 7 IT / Advanced IT options + 2 general options + 2 university electives${note(leftB)}`, met: leftB === 0 },
+    ];
+    const required = data.courses.filter((c) => c.required);
+    const requiredDone = required.filter((c) => done.has(c.id));
+    const sum = (list) => list.reduce((t, c) => t + c.credits, 0);
+    const credits = { required: sum(requiredDone), programOptions: sum(ids.map((id) => courses[id])), university: U * CONFIG.uniCredits };
+    credits.total = credits.required + credits.programOptions + credits.university;
+    return { statuses, D: ids.length, U, pathways, electivesMet: pathways.some((p) => p.met),
+      required: { done: requiredDone.length, total: required.length }, credits };
+  }
+
   function evaluate(data, state) {
+    if (data.ruleset === 'streams') return evaluateStreams(data, state);
     const courses = byId(data);
     const done = new Set(state.done);
     const elective = electiveDone(data, done);
