@@ -22,8 +22,11 @@
   </header>
 
   <div id="student">
-    <label>Student name <input id="name" type="text" maxlength="80" placeholder="Type your name for the report"></label>
-    <span id="report-date"></span>
+    <div class="student-inner">
+      <label>Student name <input id="name" type="text" maxlength="80" placeholder="Type your name for the report"></label>
+      <div id="credits" aria-live="polite"></div>
+      <span id="report-date"></span>
+    </div>
   </div>
 
   <main>
@@ -37,6 +40,9 @@
       <p class="hint">Tip: tick one course, then Shift+click the tick box of another to tick every course in between.</p>
       <div id="list"></div>
       <div id="report-completed"></div>
+    </section>
+
+    <section id="plan" aria-label="Semester plan">
       <h2>Semester plan</h2>
       <div id="plan-summary"></div>
     </section>

@@ -5,8 +5,11 @@
 }
 * { box-sizing: border-box; }
 body { margin: 0; font: 15px/1.45 system-ui, -apple-system, "Segoe UI", Arial, sans-serif; background: var(--bg); color: var(--ink); }
-header { display: flex; flex-wrap: wrap; gap: 12px; justify-content: space-between; align-items: center;
+/* Fixed-width title column so the nav sits in the same place on every page, whatever the title or buttons */
+header { display: grid; grid-template-columns: 280px auto 1fr; gap: 12px 24px; align-items: center;
   padding: 16px 20px; background: var(--navy); color: #fff; }
+header .actions { justify-self: end; flex-wrap: wrap; justify-content: flex-end; }
+@media (max-width: 900px) { header { grid-template-columns: 1fr; } header .actions { justify-self: start; } }
 header h1 { margin: 0; font-size: 22px; }
 header p { margin: 2px 0 0; opacity: .8; font-size: 13px; }
 .actions { display: flex; gap: 8px; }
@@ -15,16 +18,24 @@ button, .button { font: inherit; padding: 6px 12px; border: 1px solid #fff6; bor
 button:hover, .button:hover { background: #fff3; }
 button.danger { border-color: #ffb4ab; }
 
-main { display: grid; grid-template-columns: minmax(280px, 380px) 1fr; gap: 20px; padding: 20px; max-width: 1200px; margin: 0 auto; }
-@media (max-width: 800px) { main { grid-template-columns: 1fr; } }
-#progress { align-self: start; position: sticky; top: 12px; display: grid; gap: 14px; }
-@media (max-width: 800px) { #progress { position: static; } }
+/* Three panes: progress (left), courses (middle), semester plan (right). The side panes stick below the student bar. */
+main { display: grid; grid-template-columns: minmax(250px, 320px) minmax(0, 1fr) minmax(250px, 320px); gap: 20px;
+  padding: 20px; max-width: 1500px; margin: 0 auto; }
+#progress, #plan { align-self: start; position: sticky; top: calc(var(--bar-h, 0px) + 12px);
+  max-height: calc(100vh - var(--bar-h, 0px) - 24px); overflow-y: auto; scrollbar-width: thin; }
+#progress { display: grid; gap: 14px; }
+@media (max-width: 1100px) {
+  main { grid-template-columns: minmax(250px, 320px) minmax(0, 1fr); }
+  #plan { grid-column: 1 / -1; position: static; max-height: none; }
+}
+@media (max-width: 800px) { main { grid-template-columns: 1fr; } #progress { position: static; max-height: none; } }
 
-.card, #courses { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; }
+.card, #courses, #plan { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; }
 .card.done { border-color: var(--ok); box-shadow: 0 0 0 1px var(--ok) inset; }
 h2 { margin: 0 0 8px; font-size: 16px; color: var(--navy); }
 h3 { margin: 0 0 4px; font-size: 14px; }
 .row { display: flex; justify-content: space-between; gap: 8px; }
+.row strong { white-space: nowrap; flex-shrink: 0; }   /* keep counts like "0 / 8" on one line */
 .row.total { border-top: 1px solid var(--line); margin-top: 6px; padding-top: 6px; }
 
 .bar { height: 8px; border-radius: 4px; background: var(--line); margin: 4px 0 6px; overflow: hidden; }
@@ -68,13 +79,22 @@ small { color: var(--muted); }
 .check.ok { color: var(--ok); }
 .check.bad { color: var(--bad); }
 .empty { color: var(--muted); padding: 16px 0; }
-#plan-summary { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; }
+#plan-summary { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px; }
 .term { border: 1px solid var(--line); border-radius: 8px; padding: 10px; }
 .term ul { margin: 6px 0 0; padding-left: 18px; font-size: 13px; }
 .term li.bad { color: var(--bad); }
 
-#student { display: flex; flex-wrap: wrap; gap: 12px; justify-content: space-between; align-items: center;
-  max-width: 1200px; margin: 12px auto 0; padding: 0 20px; }
+/* Student name and credit points: one bar that stays fixed at the top while scrolling */
+#student { position: sticky; top: 0; z-index: 10; background: var(--card); border-bottom: 1px solid var(--line);
+  box-shadow: 0 2px 6px #0001; }
+.student-inner { display: flex; flex-wrap: wrap; gap: 10px 24px; justify-content: space-between; align-items: center;
+  max-width: 1500px; margin: 0 auto; padding: 10px 20px; }
+#credits { display: flex; flex-wrap: wrap; gap: 6px 18px; align-items: center; }
+.credits-title { font-weight: 600; color: var(--navy); }
+.credit { display: inline-flex; align-items: baseline; gap: 6px; }
+.credit strong { font-size: 17px; }
+.credit.total { padding: 2px 10px; border-radius: 6px; background: var(--navy); color: #fff; }
+.credit.total small { color: #fffc; }
 #student input { padding: 6px 10px; border: 1px solid var(--line); border-radius: 6px; font: inherit; width: 260px; }
 #report-date, #report-completed { display: none; }
 
@@ -83,7 +103,11 @@ small { color: var(--muted); }
   header { background: none; color: #000; padding: 0 0 8px; border-bottom: 2px solid var(--navy); }
   header p { color: #444; }
   .actions, .toolbar, #list, .uni input + * { display: none !important; }
-  #student { margin: 8px 0; padding: 0; }
+  #student { position: static; margin: 8px 0; border: none; box-shadow: none; }
+  .student-inner { padding: 0; max-width: none; }
+  .credit.total { background: none; color: inherit; padding: 0; }
+  .credit.total small { color: var(--muted); }
+  #plan { position: static; max-height: none; overflow: visible; }
   #student input { border: none; width: auto; font-weight: 600; padding: 0; }
   #student input::placeholder { color: transparent; }
   #report-date { display: inline; }
@@ -91,7 +115,7 @@ small { color: var(--muted); }
   #report-completed ul { columns: 2; margin: 4px 0; padding-left: 18px; }
   main { display: block; padding: 0; max-width: none; }
   #progress { position: static; display: block; }
-  .card, #courses { border: 1px solid #bbb; margin-bottom: 10px; padding: 8px 10px; break-inside: avoid; }
+  .card, #courses, #plan { border: 1px solid #bbb; margin-bottom: 10px; padding: 8px 10px; break-inside: avoid; }
   .card.done { box-shadow: none; }
   .uni input { border: none; background: none; width: auto; text-align: right; font-weight: 600; }
   .bar, .bar div, .chip, .course.done { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
@@ -108,9 +132,8 @@ small { color: var(--muted); }
   #student { margin: 4px 0; }
   h2 { font-size: 12px; margin: 0 0 3px; }
   h3 { font-size: 10px; }
-  #progress { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
-  #progress > .card:nth-child(2) { grid-column: 1 / -1; order: 3; }
-  .card, #courses { padding: 5px 8px; margin: 0; }
+  #progress { display: grid; gap: 6px; max-height: none; overflow: visible; }
+  .card, #courses, #plan { padding: 5px 8px; margin: 0; }
   .bar { height: 5px; margin: 2px 0 3px; }
   .pathways { margin: 2px 0; }
   .pathways li { padding: 0; }
@@ -120,7 +143,8 @@ small { color: var(--muted); }
   .groups { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0 12px; }
   .group { padding: 1px 0; font-size: 10px; }
   .warn { font-size: 9px; }
-  #courses { border: none; padding: 0; }
+  #courses, #plan { border: none; padding: 0; }
+  .credit strong { font-size: 10px; }
   #report-completed { margin: 6px 0; }
   #report-completed ul { columns: 3; font-size: 9px; margin: 2px 0; padding-left: 12px; }
   #plan-summary { grid-template-columns: repeat(4, 1fr); gap: 6px; }

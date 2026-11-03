@@ -7,6 +7,7 @@ const CONFIG = {
   planTerms: ['2026-3', '2027-1', '2027-2', '2027-3'], // terms a student can plan into
   termsPerYear: 3,                                      // RMIT runs three terms a year
   uniCredits: 12,                                       // assumed credit points per university elective
+  programCredits: 288,                                  // credit points needed to complete the program
 };
 
 const Logic = (() => {

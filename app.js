@@ -81,15 +81,15 @@ function renderProgress() {
         <input id="uni" type="number" min="0" max="8" value="${state.uni}"></label>
       <p class="hint">Program options completed (each course counted once): <strong>${ev.D}</strong></p>
       <ul class="groups">${groupRows}</ul>
-    </div>
-
-    <div class="card">
-      <h2>Credit points</h2>
-      <div class="row"><span>Core courses</span><strong>${ev.credits.required}</strong></div>
-      <div class="row"><span>Program options</span><strong>${ev.credits.programOptions}</strong></div>
-      <div class="row"><span>University electives</span><strong>${ev.credits.university}</strong></div>
-      <div class="row total"><span>Total</span><strong>${ev.credits.total}</strong></div>
     </div>`;
+
+  // Credit points sit in the fixed bar beside the student name, so they stay visible while ticking.
+  $('#credits').innerHTML = `
+    <span class="credits-title">Credit points</span>
+    <span class="credit"><small>Core</small><strong>${ev.credits.required}</strong></span>
+    <span class="credit"><small>Program options</small><strong>${ev.credits.programOptions}</strong></span>
+    <span class="credit"><small>University electives</small><strong>${ev.credits.university}</strong></span>
+    <span class="credit total"><small>Total</small><strong>${ev.credits.total} / ${CONFIG.programCredits}</strong></span>`;
 }
 
 // ---------- course list ----------
@@ -244,6 +244,9 @@ $('#reset').addEventListener('click', () => {
 });
 
 // ---------- start ----------
+// Side panes stick just below the fixed student bar, whose height changes when it wraps.
+new ResizeObserver(() => document.documentElement.style.setProperty('--bar-h', $('#student').offsetHeight + 'px'))
+  .observe($('#student'));
 $('#program').textContent = data.program;
 $('#name').value = state.name;
 $('#filter').innerHTML = filterOptions().map(([v, label]) => `<option value="${esc(v)}">${esc(label)}</option>`).join('');

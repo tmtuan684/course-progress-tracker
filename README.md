@@ -48,10 +48,10 @@ Keep all files in one folder and double-click `index.html`. To share it with stu
 
 The header menu switches between **My progress** and **Course list**.
 
-1. Tick **Completed** on each finished course. **Shift+click** a second tick box to tick (or untick) every course between it and the last box you clicked; the list order follows the current search and filter. The left panel updates: core courses, the four pathways, per-major/minor progress, and credit points.
+1. Tick **Completed** on each finished course. **Shift+click** a second tick box to tick (or untick) every course between it and the last box you clicked; the list order follows the current search and filter. The left panel updates core courses, the four pathways and per-major/minor progress; credit points update in the bar beside the student name, which stays fixed at the top while scrolling.
 2. Enter the number of university electives completed.
 3. Use the search box and filter (all, not completed, offered next term, core, or a single major/minor) to find courses.
-4. Pick a term in **Plan for…** to check the course is offered. The Semester plan section shows courses, credits and problems per term.
+4. Pick a term in **Plan for…** to check the course is offered. The Semester plan pane on the right (below the list on narrower screens) shows courses, credits and problems per term.
 5. **Download PDF report** opens the print dialog with a one-page report (name, date, progress, completed courses, semester plan); choose "Save as PDF". Type your name in the box under the header first.
 6. **Export progress** saves a JSON file; **Import** loads it back (for another computer or a backup). **Restart planner** (on both My progress and Course sequence) clears everything: ticks, plans, name, starting term, breaks, major/minors and chosen courses.
 
