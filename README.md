@@ -10,14 +10,16 @@ Keep all files in one folder and double-click `index.html`. To share it with stu
 
 | File | Purpose |
 |---|---|
-| `index.html` | My progress page. Script order matters: data, logic, app. |
+| `index.html`, `index.js` | My progress page: tick completed courses, plan terms, see progress and credit points. `index.js` keeps the page's state and draws it; it contains no degree rules. |
 | `courses.html`, `courses.js` | Course list page: every course with its offering per term (read-only). |
 | `sequence.html`, `sequence.js` | Course sequence page: the recommended order from semester 1 to 8 (years 1 to 3), with completed courses highlighted from saved progress. |
 | `style.css` | Appearance: RMIT colours (red `#e60028`, navy `#000054`) in `:root`, plus a compact print layout for the one-page PDF. |
-| `app.js` | User interface: keeps state, saves it, draws the page. Contains no degree rules. |
+| `ui.js` | Shared by every page: small page helpers, course chips and filters, and reading/saving the student's progress in the browser. |
 | `logic.js` | The degree rules as pure functions (no page code), so they can be tested in Node. |
 | `data.js` | All course data, generated from the Excel file. Sets the global `window.DATA`, which every page reads. |
 | `tools/make_data.py` | Regenerates `data.js` from `Course_List.xlsx`. Not needed to run the site. |
+
+Every page loads its scripts in this order: `data.js`, `logic.js`, `ui.js`, then its own script.
 
 `data.js` is a JavaScript file rather than JSON because browsers block loading a local JSON file when a page is opened directly from disk.
 

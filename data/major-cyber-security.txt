@@ -1,0 +1,19 @@
+Major: Cyber Security
+Complete 96 credit points comprising:
+
+96 credit points from Major: Cyber Security
+Major: Cyber Security
+Complete 96 credit points from the following:
+Title	Credit Points	Enforced Course Requisites	Course Code	Campus	Teaching Period	Class	Section	Start Date	Delivery Mode
+Data Communication and Net-Centric Computing	12		COSC2174	RMIT Vietnam Saigon South	Vietnam Semester 1		ZZZZ	02-Mar-2026	Face-to-Face
+COSC2174	RMIT Vietnam Saigon South	Vietnam Semester 3		ZZZZ	26-Oct-2026	Face-to-Face
+Security in Computing and Information Technology	12		COSC2539	RMIT Vietnam Saigon South	Vietnam Semester 3		ZZZZ	26-Oct-2026	Face-to-Face
+Security Testing	12		INTE2548	RMIT Vietnam Saigon South	Vietnam Semester 2		ZZZZ	29-Jun-2026	Face-to-Face
+Introduction to Cybersecurity Governance	12		INTE2585	RMIT Vietnam Saigon South	Vietnam Semester 1		ZZZZ	02-Mar-2026	Face-to-Face
+INTE2585	RMIT Vietnam Saigon South	Vietnam Semester 3		ZZZZ	26-Oct-2026	Face-to-Face
+Cyber Security Attack Analysis and Incidence Response	12		INTE2635	RMIT Vietnam Saigon South	Vietnam Semester 3		ZZZZ	26-Oct-2026	Face-to-Face
+Secure Electronic Commerce	12		INTE2637	RMIT Vietnam Saigon South	Vietnam Semester 1		ZZZZ	02-Mar-2026	Face-to-Face
+Cloud Security	12		INTE2639	RMIT Vietnam Saigon South	Vietnam Semester 2		ZZZZ	29-Jun-2026	Face-to-Face
+Developing Blockchain Applications	12		INTE2706	RMIT Vietnam Saigon South					
+Blockchain Technology Fundamentals	12		INTE2641	RMIT Vietnam Saigon South	Vietnam Semester 1		ZZZZ	02-Mar-2026	Face-to-Face
+Computer and Internet Forensics	12		COSC3079	RMIT Vietnam Saigon South	Vietnam Semester 1		ZZZZ	02-Mar-2026	Face-to-Face

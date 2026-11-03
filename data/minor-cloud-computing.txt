@@ -1,0 +1,13 @@
+Minor: Cloud Computing
+Complete 48 credit points comprising:
+
+48 credit points from Minor: Cloud Computing
+Minor: Cloud Computing
+Complete 48 credit points from the following:
+Title	Credit Points	Enforced Course Requisites	Course Code	Campus	Teaching Period	Class	Section	Start Date	Delivery Mode
+Cloud Foundations	12		COSC2766	RMIT Vietnam Saigon South	Vietnam Semester 1		ZZZZ	02-Mar-2026	Face-to-Face
+Cloud Developing	12		COSC2822	RMIT Vietnam Saigon South	Vietnam Semester 3		ZZZZ	26-Oct-2026	Face-to-Face
+Cloud Operations	12		COSC2825	RMIT Vietnam Saigon South	Vietnam Semester 3		ZZZZ	26-Oct-2026	Face-to-Face
+Cloud Computing	12		COSC2638	RMIT Vietnam Saigon South	Vietnam Semester 2		ZZZZ	29-Jun-2026	Face-to-Face
+Cloud Architecting	12		COSC2930	RMIT Vietnam Saigon South	Vietnam Semester 2		ZZZZ	29-Jun-2026	Face-to-Face
+Cloud Security	12		INTE2639	RMIT Vietnam Saigon South	Vietnam Semester 2		ZZZZ	29-Jun-2026	Face-to-Face

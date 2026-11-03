@@ -1,0 +1,11 @@
+Minor: Creative Computing
+Complete 48 credit points comprising:
+
+48 credit points from Minor: Creative Computing
+Minor: Creative Computing
+Complete 48 credit points from the following:
+Title	Credit Points	Enforced Course Requisites	Course Code	Campus	Teaching Period	Class	Section	Start Date	Delivery Mode
+Games Studio 1	12		COSC3072	RMIT Vietnam Saigon South	Vietnam Semester 1		ZZZZ	02-Mar-2026	Face-to-Face
+Games Studio 2	12		COSC3169	RMIT Vietnam Saigon South					
+Mixed Reality	12		COSC3074	RMIT Vietnam Saigon South					
+Games and Artificial Intelligence Techniques	12		COSC3066	RMIT Vietnam Saigon South	Vietnam Semester 2		ZZZZ	29-Jun-2026	Face-to-Face

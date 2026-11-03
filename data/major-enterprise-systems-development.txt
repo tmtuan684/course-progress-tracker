@@ -1,0 +1,24 @@
+Major: Enterprise Systems Development
+Complete 96 credit points comprising:
+
+96 credit points from Major: Enterprise Systems Development
+Major: Enterprise Systems Development
+Complete 96 credit points from the following:
+Title	Credit Points	Enforced Course Requisites	Course Code	Campus	Teaching Period	Class	Section	Start Date	Delivery Mode
+Further Programming	12		COSC2440	RMIT Vietnam Saigon South	Vietnam Semester 1		ZZZZ	02-Mar-2026	Face-to-Face
+COSC2440	RMIT Vietnam Saigon South	Vietnam Semester 3		ZZZZ	26-Oct-2026	Face-to-Face
+Algorithms and Analysis	12		COSC2469	RMIT Vietnam Saigon South	Vietnam Semester 1		ZZZZ	02-Mar-2026	Face-to-Face
+COSC2469	RMIT Vietnam Saigon South	Vietnam Semester 2		ZZZZ	29-Jun-2026	Face-to-Face
+Full Stack Development	12		COSC2769	RMIT Vietnam Saigon South	Vietnam Semester 1		ZZZZ	02-Mar-2026	Face-to-Face
+COSC2769	RMIT Vietnam Saigon South	Vietnam Semester 2		ZZZZ	29-Jun-2026	Face-to-Face
+Software Testing	12		ISYS2092	RMIT Vietnam Saigon South	Vietnam Semester 2		ZZZZ	29-Jun-2026	Face-to-Face
+Database Applications	12		ISYS2099	RMIT Vietnam Saigon South	Vietnam Semester 3		ZZZZ	26-Oct-2026	Face-to-Face
+Web Development Technologies	12		COSC2450	RMIT Vietnam Saigon South					
+iPhone Software Engineering	12		COSC3062	RMIT Vietnam Saigon South	Vietnam Semester 2		ZZZZ	29-Jun-2026	Face-to-Face
+Software Engineering: Process and Tools	12		COSC2101	RMIT Vietnam Saigon South	Vietnam Semester 3		ZZZZ	26-Oct-2026	Face-to-Face
+Programming Internet of Things	12		COSC2790	RMIT Vietnam Saigon South	Vietnam Semester 1		ZZZZ	02-Mar-2026	Face-to-Face
+Systems Architecture and Design	12		ISYS3461	RMIT Vietnam Saigon South	Vietnam Semester 3		ZZZZ	26-Oct-2026	Face-to-Face
+Usability Engineering	12		COSC3159	RMIT Vietnam Saigon South	Vietnam Semester 1		ZZZZ	02-Mar-2026	Face-to-Face
+Software Requirements Engineering	12		COSC3162	RMIT Vietnam Saigon South	Vietnam Semester 1		ZZZZ	02-Mar-2026	Face-to-Face
+Enterprise Application Development 1	12		COSC3092	RMIT Vietnam Saigon South	Vietnam Semester 2		ZZZZ	29-Jun-2026	Face-to-Face
+Mobile Application Development	12		COSC2543	RMIT Vietnam Saigon South	Vietnam Semester 2		ZZZZ	29-Jun-2026	Face-to-Face

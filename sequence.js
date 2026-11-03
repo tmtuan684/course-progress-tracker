@@ -1,41 +1,23 @@
 // sequence.js - recommended course order, year 1 to year 3, with a picker for the combination boxes.
 // The order (semester 1 to 8) is fixed in data.js. Starting term, breaks, major/minor choices and
-// hand-picked courses are saved with the student's progress in the same localStorage entry.
-const data = window.DATA;
-if (!data || !Array.isArray(data.sequence)) {
+// hand-picked courses are saved with the student's progress in the same localStorage entry (see ui.js).
+if (!Array.isArray(data.sequence)) {
   document.querySelector('#sequence').innerHTML = '<p class="card warn">This page needs the course sequence in data.js. Replace data.js with the latest version, or regenerate it with tools/make_data.py.</p>';
   throw new Error('data.js has no sequence');
 }
-const courseById = Logic.byId(data);
-const groupById = Object.fromEntries(data.groups.map((g) => [g.id, g]));
-const STORAGE_KEY = 'course-planner.v1';
-const SLOTS = 8;
-const $ = (sel) => document.querySelector(sel);
-const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
-const groupLabel = (g) => `${g.type}: ${g.name}`;
+const SLOTS = CONFIG.slots;
+const updateSaved = (changes) => saveState({ ...loadState(), ...changes });   // keep the rest of the saved progress
 
-function readSaved() {
-  try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {}; } catch (e) { return {}; }
-}
-function updateSaved(changes) {            // merge into the saved progress, keep everything else
-  try { localStorage.setItem(STORAGE_KEY, JSON.stringify({ ...readSaved(), ...changes })); } catch (e) { /* not saved */ }
-}
-
-const saved = readSaved();
-const state = { done: Array.isArray(saved.done) ? saved.done : [], uni: Number(saved.uni) || 0, plan: saved.plan || {} };
-let start = /^\d{4}-[1-3]$/.test(saved.start) ? saved.start : CONFIG.planTerms[0];
-let major = groupById[saved.major] && groupById[saved.major].type === 'Major' ? saved.major : '';
-let minors = (Array.isArray(saved.minors) ? saved.minors : []).filter((id) => groupById[id] && groupById[id].type === 'Minor').slice(0, 2);
-let breaks = Array.isArray(saved.breaks) ? saved.breaks.map(Number).filter((n) => n >= 2 && n <= 8) : [];
-// slots[i]: '' = follow the suggestion, 'none' = left empty on purpose, 'UNI' = university elective, or a course id
-let slots = Array(SLOTS).fill('');
-if (Array.isArray(saved.slots)) saved.slots.slice(0, SLOTS).forEach((v, i) => {
-  if (v === 'none' || v === 'UNI' || (courseById[v] && !courseById[v].required)) slots[i] = v;
-});
-let active = -1;
+const saved = loadState();
+const state = { done: saved.done, uni: saved.uni };
+let start = saved.start || CONFIG.planTerms[0];
+let { major, minors, breaks, slots } = saved;    // slot values are explained in clean() in ui.js
+let active = -1;                           // box picked by clicking, waiting for a course
 const picked = new Set();                  // courses selected in the picker (click, Shift+click for a range)
 let anchor = null;                         // last course clicked, start of a Shift range
-let visibleIds = [];                       // picker rows currently shown, in order                           // slot picked by clicking, waiting for a course
+let visibleIds = [];                       // picker rows currently shown, in order
+let folded = false;                        // course picker folded away (remembered in this browser)
+try { folded = localStorage.getItem(FOLD_KEY) === '1'; } catch (e) { /* keep default */ }
 
 const electives = data.courses.filter((c) => !c.required);
 
@@ -49,20 +31,24 @@ function startOptions() {
 }
 
 function offeringLine(id, term) {
-  if (!data.terms.includes(term)) return '<small class="muted">No schedule yet for ' + esc(term) + '</small>';
-  const ok = Logic.offeredIn(data, id, term);
+  const o = Logic.offering(data, id, term);
+  if (o === 'unscheduled') return '<small class="muted">No schedule yet for ' + esc(term) + '</small>';
+  const ok = o === 'yes';
   return `<small class="${ok ? 'ok' : 'muted'}">${ok ? 'offered ' : 'not offered '}${esc(term)}</small>`;
+}
+
+// Inside of a course card: kind badge, code, name, credits (+ note) and whether it runs that term.
+function cardBody(c, kind, label, note, term, extra = '') {
+  const done = state.done.includes(c.id);
+  return `<span class="kind ${kind}">${esc(label)}</span>${extra}
+    <strong>${esc(c.id)}</strong><span>${esc(c.name)}</span>
+    <small>${c.credits} cp${note}${done ? ' - completed' : ''}</small>
+    ${done ? '' : offeringLine(c.id, term)}`;
 }
 
 function courseCard(id, term) {
   const c = courseById[id];
-  const done = state.done.includes(id);
-  return `<div class="seq-card core ${done ? 'done' : ''} ${c.credits > 12 ? 'big' : ''}">
-    <span class="kind core">${esc(c.category || 'Core')}</span>
-    <strong>${esc(c.id)}</strong><span>${esc(c.name)}</span>
-    <small>${c.credits} cp${done ? ' - completed' : ''}</small>
-    ${done ? '' : offeringLine(id, term)}
-  </div>`;
+  return `<div class="seq-card core ${state.done.includes(id) ? 'done' : ''}">${cardBody(c, 'core', c.category || 'Core', '', term)}</div>`;
 }
 
 // ---------- suggestions from the chosen major / minors ----------
@@ -87,10 +73,11 @@ function suggestions() {
 function resolveSlots() {
   const sug = suggestions();
   const manualIds = new Set(slots.filter((v) => courseById[v]));
+  const chosen = picks();
   const out = slots.map((v, i) => {
     if (v === 'UNI') return { kind: 'uni', manual: true };
     if (v === 'none') return { kind: 'open' };
-    if (courseById[v]) return { kind: 'course', id: v, manual: true, group: picks().find((g) => g.members.includes(v)) || null };
+    if (courseById[v]) return { kind: 'course', id: v, manual: true, group: chosen.find((g) => g.members.includes(v)) || null };
     const s = sug.list[i];
     if (s && !manualIds.has(s.id)) return { kind: 'course', id: s.id, manual: false, group: s.group };
     return { kind: 'open' };
@@ -117,10 +104,7 @@ function slotCard(info, i, term) {
     const why = info.group ? `suggested for ${info.group.type.toLowerCase()}: ${esc(info.group.name)}`
       : info.manual ? 'chosen by you' : 'completed course';
     return `<div class="seq-card suggest ${kind.toLowerCase()} ${done ? 'done' : ''} ${active === i ? 'active' : ''}" ${cls}>
-      <span class="kind ${kind.toLowerCase()}">${esc(kind)}</span>${x}
-      <strong>${esc(c.id)}</strong><span>${esc(c.name)}</span>
-      <small>${c.credits} cp - ${why}${done ? ' - completed' : ''}</small>
-      ${done ? '' : offeringLine(c.id, term)}</div>`;
+      ${cardBody(c, kind.toLowerCase(), kind, ' - ' + why, term, x)}</div>`;
   }
   if (info.kind === 'uni') {
     return `<div class="seq-card suggest option ${info.done ? 'done' : ''} ${active === i ? 'active' : ''}" ${cls}>
@@ -160,7 +144,7 @@ function render() {
   }).join('');
 
   const filled = res.slots.filter((o) => o.kind !== 'open').length;
-  const last = Logic.termFor(start, 8, breaks);
+  const last = Logic.termFor(start, CONFIG.semesters, breaks);
   $('#summary').textContent = `${ev.required.done} of ${ev.required.total} core courses completed; ` +
     `${filled} of ${SLOTS} combination boxes filled. Planned finish: ${last}.`;
   $('#pick-note').textContent = res.notes.join(' ') || (res.hasSug
@@ -170,21 +154,17 @@ function render() {
 }
 
 // ---------- course picker ----------
-function poolFilterOptions() {
-  return [['all', 'All elective courses'], ['chosen', 'My major / minors'],
-    ...data.groups.map((g) => ['group:' + g.id, groupLabel(g)])]
-    .map(([v, l]) => `<option value="${esc(v)}">${esc(l)}</option>`).join('');
-}
+const poolFilterOptions = () => optionsHtml([['all', 'All elective courses'], ['chosen', 'My major / minors'], ...groupFilterPairs()]);
 
 function renderPool(placedSem) {
   const q = $('#pool-search').value.trim().toLowerCase();
   const f = $('#pool-filter').value || 'all';
   const chosenIds = new Set(picks().flatMap((g) => g.members));
   const list = electives.filter((c) => {
-    if (q && !(c.id + ' ' + c.name).toLowerCase().includes(q)) return false;
+    if (!textMatch(c, q)) return false;
     if (f === 'chosen') return chosenIds.has(c.id);
-    if (f.startsWith('group:')) return c.groups.includes(f.slice(6));
-    return true;
+    const g = filterGroup(f);
+    return g ? c.groups.includes(g) : true;
   });
   const showUni = f === 'all' && !q;
   visibleIds = (showUni ? ['UNI'] : []).concat(list.map((c) => c.id));
@@ -194,7 +174,7 @@ function renderPool(placedSem) {
     <button class="add" data-add="UNI">Add</button></div>`;
   const rows = list.map((c) => {
     const where = placedSem[c.id];
-    const chips = c.groups.map((id) => `<span class="chip ${groupById[id].type.toLowerCase()}">${esc(groupLabel(groupById[id]))}</span>`).join('');
+    const chips = groupChips(c);
     return `<div class="pool-item ${where ? 'placed' : ''} ${picked.has(c.id) ? 'selected' : ''}" draggable="true" data-id="${esc(c.id)}">
       <div><strong>${esc(c.id)}</strong> ${esc(c.name)} <small>${c.credits} cp</small>
         <div class="chips">${chips}${where ? `<span class="chip ok">in semester ${where}</span>` : ''}${state.done.includes(c.id) ? '<span class="chip req">completed</span>' : ''}</div></div>
@@ -326,12 +306,10 @@ $('#sequence').addEventListener('drop', (e) => {
   if (ids.length) placeMany(ids, Number(box.dataset.slot));
 });
 
-// fold / unfold the course picker (remembered in this browser)
-let folded = false;
-try { folded = localStorage.getItem('course-planner.pool-folded') === '1'; } catch (e) { /* keep default */ }
+// fold / unfold the course picker
 function setFolded(v) {
   folded = v;
-  try { localStorage.setItem('course-planner.pool-folded', v ? '1' : '0'); } catch (e) { /* not saved */ }
+  try { localStorage.setItem(FOLD_KEY, v ? '1' : '0'); } catch (e) { /* not saved */ }
   document.querySelector('.seq-layout').classList.toggle('folded', v);
   const b = $('#pool-toggle');
   b.setAttribute('aria-expanded', String(!v));
@@ -339,11 +317,7 @@ function setFolded(v) {
   if (v && active >= 0) { active = -1; render(); }
 }
 // restart everything: ticks, plans, name, starting term, breaks, major/minors and hand-picked boxes
-$('#restart').addEventListener('click', () => {
-  if (!confirm('Restart the course planner? This clears your ticked courses, plans, starting term, breaks, major/minors and chosen courses.')) return;
-  try { localStorage.removeItem(STORAGE_KEY); localStorage.removeItem('course-planner.pool-folded'); } catch (e) { /* nothing to clear */ }
-  location.reload();
-});
+$('#restart').addEventListener('click', () => { if (restartPlanner()) location.reload(); });
 $('#pool-toggle').addEventListener('click', () => setFolded(!folded));
 setFolded(folded);
 render();

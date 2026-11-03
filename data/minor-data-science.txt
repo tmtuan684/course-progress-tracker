@@ -1,0 +1,13 @@
+Minor: Data Science
+Complete 48 credit points comprising:
+
+48 credit points from Minor: Data Science
+Minor: Data Science
+Complete 48 credit points from the following:
+Title	Credit Points	Enforced Course Requisites	Course Code	Campus	Teaching Period	Class	Section	Start Date	Delivery Mode
+Practical Data Science	12		COSC2789	RMIT Vietnam Saigon South	Vietnam Semester 3		ZZZZ	26-Oct-2026	Face-to-Face
+Advanced Programming for Data Science	12		COSC3081	RMIT Vietnam Saigon South	Vietnam Semester 1		ZZZZ	02-Mar-2026	Face-to-Face
+Data Visualisation with R	12		MATH2459	RMIT Vietnam Saigon South	Vietnam Semester 1		ZZZZ	02-Mar-2026	Face-to-Face
+Practical Statistics	12		MATH2474	RMIT Vietnam Saigon South					
+Case Studies in Data Science	12		COSC3171	RMIT Vietnam Saigon South					
+The Data Science Professional	12		COSC3077	RMIT Vietnam Saigon South	Vietnam Semester 3		ZZZZ	26-Oct-2026	Face-to-Face

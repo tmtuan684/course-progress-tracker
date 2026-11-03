@@ -1,0 +1,14 @@
+Minor: AI & Machine Learning
+Complete 48 credit points comprising:
+
+48 credit points from Minor: AI & Machine Learning
+Minor: AI & Machine Learning
+Complete 48 credit points from the following:
+Title	Credit Points	Enforced Course Requisites	Course Code	Campus	Teaching Period	Class	Section	Start Date	Delivery Mode
+Artificial Intelligence	12		COSC2129	RMIT Vietnam Saigon South	Vietnam Semester 2		ZZZZ	29-Jun-2026	Face-to-Face
+Games and Artificial Intelligence Techniques	12		COSC3066	RMIT Vietnam Saigon South	Vietnam Semester 2		ZZZZ	29-Jun-2026	Face-to-Face
+Machine Learning	12		COSC2753	RMIT Vietnam Saigon South	Vietnam Semester 2		ZZZZ	29-Jun-2026	Face-to-Face
+Deep Learning	12		COSC3068	RMIT Vietnam Saigon South	Vietnam Semester 3		ZZZZ	26-Oct-2026	Face-to-Face
+Managing Semi-structured and Unstructured Data	12		ISYS3490	RMIT Vietnam Saigon South					
+Social Media and Networks Analytics	12		COSC3167	RMIT Vietnam Saigon South					
+Programming Autonomous Robots	12		COSC3070	RMIT Vietnam Saigon South	Vietnam Semester 1		ZZZZ	02-Mar-2026	Face-to-Face

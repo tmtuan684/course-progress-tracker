@@ -1,0 +1,18 @@
+Major: Digital Innovation
+Complete 96 credit points comprising:
+
+96 credit points from Major: Digital Innovation
+Major: Digital Innovation
+Complete 96 credit points from the following:
+Title	Credit Points	Enforced Course Requisites	Course Code	Campus	Teaching Period	Class	Section	Start Date	Delivery Mode
+Principles of Psychology	12		BESC1525	RMIT Vietnam Saigon South	Vietnam Semester 1		ZZZZ	02-Mar-2026	Face-to-Face
+Managing Change	12		BUSM3312	RMIT Vietnam Saigon South	Vietnam Semester 1		ZZZZ	02-Mar-2026	Face-to-Face
+BUSM3312	RMIT Vietnam Saigon South	Vietnam Semester 2		ZZZZ	29-Jun-2026	Face-to-Face
+Cloud Developing	12		COSC2822	RMIT Vietnam Saigon South	Vietnam Semester 3		ZZZZ	26-Oct-2026	Face-to-Face
+Practical Data Science	12		COSC2789	RMIT Vietnam Saigon South	Vietnam Semester 3		ZZZZ	26-Oct-2026	Face-to-Face
+Cloud Architecting	12		COSC2930	RMIT Vietnam Saigon South	Vietnam Semester 2		ZZZZ	29-Jun-2026	Face-to-Face
+Applied Entrepreneurship	12		BUSM4092	RMIT Vietnam Saigon South	Vietnam Semester 1		ZZZZ	02-Mar-2026	Face-to-Face
+Introduction to Cybersecurity Governance	12		INTE2585	RMIT Vietnam Saigon South	Vietnam Semester 1		ZZZZ	02-Mar-2026	Face-to-Face
+INTE2585	RMIT Vietnam Saigon South	Vietnam Semester 3		ZZZZ	26-Oct-2026	Face-to-Face
+UI and UX for Apple Platform	12		COSC3163	RMIT Vietnam Saigon South	Vietnam Semester 3		ZZZZ	26-Oct-2026	Face-to-Face
+Getting Started with iOS App Development	12		COSC3165	RMIT Vietnam Saigon South					

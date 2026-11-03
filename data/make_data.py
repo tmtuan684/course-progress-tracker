@@ -39,7 +39,8 @@ for r in range(5, ws.max_row + 1):
 
 # how many courses each group needs: majors 8, minors 4 (never more than are listed)
 for g in groups.values():
-    g['need'] = min(8 if g['type'] == 'Major' else 4, len(g['members'])) if g['members'] else (8 if g['type'] == 'Major' else 4)
+    full = 8 if g['type'] == 'Major' else 4
+    g['need'] = min(full, len(g['members'])) if g['members'] else full
 
 # offerings (SGS campus) from the Offering Schedule sheet: code -> {term: "Yes"/"Cancelled"/...}
 wo = wb['Offering Schedule 2026']

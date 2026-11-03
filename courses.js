@@ -1,19 +1,13 @@
 // courses.js - read-only table of all courses and the terms they are offered.
-const data = window.DATA;
 const HANDBOOK_URL = 'https://handbook.rmit.edu.au/ords/r/rmit/catalogue/program?p5_code=BP162VI23';
-const groupById = Object.fromEntries(data.groups.map((g) => [g.id, g]));
-const $ = (sel) => document.querySelector(sel);
-const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
-const groupLabel = (g) => `${g.type}: ${g.name}`;
 
-function offeringCell(c, term) {
-  const row = data.offerings[c.id];
-  if (!row) return '<td class="off none" title="Not in the schedule">–</td>';
-  const v = row[term] || '';
-  if (v.startsWith('Yes')) return '<td class="off yes">Offered</td>';
-  if (v === 'Cancelled') return '<td class="off cancelled">Cancelled</td>';
-  return '<td class="off no">Not offered</td>';
-}
+const OFFERING_CELL = {
+  yes: '<td class="off yes">Offered</td>',
+  cancelled: '<td class="off cancelled">Cancelled</td>',
+  no: '<td class="off no">Not offered</td>',
+  none: '<td class="off none" title="Not in the schedule">–</td>',
+};
+const offeringCell = (c, term) => OFFERING_CELL[Logic.offering(data, c.id, term)];
 
 // Prerequisite cell: codes in the handbook text are shown with the course name.
 function prereqCell(c) {
@@ -22,7 +16,7 @@ function prereqCell(c) {
   const note = p.note ? ` title="${esc(p.note)}"` : '';
   if (!p.text) return `<td class="prereq"${note}>None listed <small>(${esc(p.source)})</small></td>`;
   const html = esc(p.text).replace(/[A-Z]{4}\d{4}/g, (code) => {
-    const r = data.courses.find((x) => x.id === code);
+    const r = courseById[code];
     return r ? `<strong>${code}</strong> ${esc(r.name)}` : code;
   });
   const flag = /confirm/i.test(p.note) ? ' <span class="chip muted" title="' + esc(p.note) + '">to confirm</span>' : '';
@@ -30,10 +24,11 @@ function prereqCell(c) {
 }
 
 function matches(c, filter, offered, q) {
-  if (q && !(c.id + ' ' + c.name).toLowerCase().includes(q)) return false;
+  if (!textMatch(c, q)) return false;
   if (filter === 'required' && !c.required) return false;
   if (filter === 'elective' && c.required) return false;
-  if (filter.startsWith('group:') && !c.groups.includes(filter.slice(6))) return false;
+  const g = filterGroup(filter);
+  if (g && !c.groups.includes(g)) return false;
   if (offered !== 'any' && !Logic.offeredIn(data, c.id, offered)) return false;
   return true;
 }
@@ -46,7 +41,7 @@ function render() {
   const body = list.map((c) => `<tr>
     <td><strong>${esc(c.id)}</strong></td><td>${esc(c.name)}</td><td>${c.credits}</td>
     <td>${c.required ? '<span class="chip req">' + esc(c.category || 'Core') + '</span>' : 'Elective'}</td>
-    <td>${c.groups.map((id) => `<span class="chip ${groupById[id].type.toLowerCase()}">${esc(groupLabel(groupById[id]))}</span>`).join(' ')}</td>
+    <td>${groupChips(c, ' ')}</td>
     ${prereqCell(c)}
     ${data.terms.map((t) => offeringCell(c, t)).join('')}</tr>`).join('');
   $('#table').innerHTML = head + `<tbody>${body}</tbody>`;
@@ -54,10 +49,8 @@ function render() {
 }
 
 $('#program').textContent = data.program;
-$('#filter').innerHTML = [['all', 'All courses'], ['required', 'Core courses'], ['elective', 'Electives only'],
-  ...data.groups.map((g) => ['group:' + g.id, groupLabel(g)])]
-  .map(([v, l]) => `<option value="${esc(v)}">${esc(l)}</option>`).join('');
-$('#offered').innerHTML = '<option value="any">Offered in any term</option>' +
-  data.terms.map((t) => `<option value="${esc(t)}">Offered in ${esc(t)}</option>`).join('');
+$('#filter').innerHTML = optionsHtml([['all', 'All courses'], ['required', 'Core courses'], ['elective', 'Electives only'],
+  ...groupFilterPairs()]);
+$('#offered').innerHTML = optionsHtml([['any', 'Offered in any term'], ...data.terms.map((t) => [t, 'Offered in ' + t])]);
 ['input', 'change'].forEach((ev) => document.querySelectorAll('.toolbar > *').forEach((el) => el.addEventListener(ev, render)));
 render();

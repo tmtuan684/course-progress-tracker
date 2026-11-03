@@ -6,17 +6,23 @@
 const CONFIG = {
   planTerms: ['2026-3', '2027-1', '2027-2', '2027-3'], // terms a student can plan into
   termsPerYear: 3,                                      // RMIT runs three terms a year
+  semesters: 8,                                         // semesters in the program plan guide
+  slots: 8,                                             // open "Combination course" boxes in the sequence
+  maxUni: 8,                                            // most university electives a student can count
   uniCredits: 12,                                       // assumed credit points per university elective
   programCredits: 288,                                  // credit points needed to complete the program
 };
 
 const Logic = (() => {
-  const byId = (data) => Object.fromEntries(data.courses.map((c) => [c.id, c]));
+  const lookups = new WeakMap();                        // data -> { id: course }, built once per data object
+  function byId(data) {
+    if (!lookups.has(data)) lookups.set(data, Object.fromEntries(data.courses.map((c) => [c.id, c])));
+    return lookups.get(data);
+  }
 
   // A course used as a REQUIRED course cannot also fill an elective slot, so only
   // non-required completed courses count towards majors/minors/program options.
-  function electiveDone(data, state) {
-    const done = new Set(state.done);
+  function electiveDone(data, done) {
     return new Set(data.courses.filter((c) => !c.required && done.has(c.id)).map((c) => c.id));
   }
 
@@ -45,13 +51,14 @@ const Logic = (() => {
   function evaluate(data, state) {
     const courses = byId(data);
     const done = new Set(state.done);
-    const elective = electiveDone(data, state);
+    const elective = electiveDone(data, done);
     const statuses = data.groups.map((g) => groupStatus(g, elective, done));
     const majors = statuses.filter((s) => s.group.type === 'Major');
     const minors = statuses.filter((s) => s.group.type === 'Minor');
 
-    // D = distinct program-option courses completed (each course counted once, however many groups list it)
-    const D = [...elective].filter((id) => courses[id].groups.length > 0).length;
+    // program options = completed electives listed by at least one group (each course counted once)
+    const options = [...elective].filter((id) => courses[id].groups.length > 0).map((id) => courses[id]);
+    const D = options.length;
     const U = Number(state.uni) || 0;
 
     let pairOK = false;
@@ -69,10 +76,9 @@ const Logic = (() => {
     const required = data.courses.filter((c) => c.required);
     const requiredDone = required.filter((c) => done.has(c.id));
     const sum = (list) => list.reduce((t, c) => t + c.credits, 0);
-    const electiveCredits = sum([...elective].filter((id) => courses[id].groups.length > 0).map((id) => courses[id]));
     const credits = {
       required: sum(requiredDone),
-      programOptions: electiveCredits,
+      programOptions: sum(options),
       university: U * CONFIG.uniCredits,
     };
     credits.total = credits.required + credits.programOptions + credits.university;
@@ -85,19 +91,27 @@ const Logic = (() => {
     };
   }
 
-  // Is this course running at SGS in this term?  Same wording as the Excel "Plan check".
+  // Is this course running at SGS in this term?
+  // 'yes' | 'cancelled' | 'no' | 'none' (course not in the schedule) | 'unscheduled' (no schedule for that term)
+  function offering(data, id, term) {
+    if (!data.terms.includes(term)) return 'unscheduled';
+    const row = data.offerings[id];
+    if (!row) return 'none';
+    const v = row[term] || '';
+    return v.startsWith('Yes') ? 'yes' : v === 'Cancelled' ? 'cancelled' : 'no';
+  }
+  const offeredIn = (data, id, term) => offering(data, id, term) === 'yes';
+
+  // Same wording as the Excel "Plan check".
+  const PLAN_CHECK = { yes: 'OK', cancelled: 'Cancelled', no: 'Not offered', none: 'Not in schedule', unscheduled: 'No schedule yet' };
   function planCheck(data, state, id, term) {
     if (!term) return '';
     if (state.done.includes(id)) return 'Already completed';
-    if (!data.terms.includes(term)) return 'No schedule yet';
-    const row = data.offerings[id];
-    if (!row) return 'Not in schedule';
-    const v = row[term] || '';
-    if (v.startsWith('Yes')) return 'OK';
-    return v === 'Cancelled' ? 'Cancelled' : 'Not offered';
+    return PLAN_CHECK[offering(data, id, term)];
   }
 
-  const offeredIn = (data, id, term) => ((data.offerings[id] || {})[term] || '').startsWith('Yes');
+  // A term written as "2027-1" (year, then term number within the year).
+  const isTerm = (t) => new RegExp(`^\\d{4}-[1-${CONFIG.termsPerYear}]$`).test(t);
 
   // Turn a relative semester (1, 2, 3 ...) into a real term such as "2027-1".
   // start = the term of semester 1; breaks = semesters that are preceded by a skipped term.
@@ -108,7 +122,7 @@ const Logic = (() => {
     return Math.floor(i / CONFIG.termsPerYear) + '-' + ((i % CONFIG.termsPerYear) + 1);
   }
 
-  return { evaluate, planCheck, offeredIn, byId, termFor };
+  return { evaluate, planCheck, offering, offeredIn, byId, isTerm, termFor };
 })();
 
 if (typeof module !== 'undefined') module.exports = { Logic, CONFIG }; // lets Node tests import it

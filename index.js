@@ -1,50 +1,9 @@
-// app.js - the user interface: keeps the state, saves it, and draws the page.
-// All degree rules live in logic.js; this file only calls them.
+// index.js - the user interface: keeps the state, saves it, and draws the page.
+// All degree rules live in logic.js; shared helpers and the saved progress live in ui.js.
 
-const STORAGE_KEY = 'course-planner.v1';
-const data = window.DATA;
-const courseById = Logic.byId(data);
-const groupById = Object.fromEntries(data.groups.map((g) => [g.id, g]));
 const nextTerm = CONFIG.planTerms[0];
-
-// ---------- state (saved in the browser with localStorage) ----------
-const emptyState = () => ({ done: [], uni: 0, plan: {}, name: '', start: '', breaks: [], major: '', minors: [], slots: Array(8).fill('') });
-let state = load();
-
-function load() {
-  try {
-    const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
-    return saved ? clean(saved) : emptyState();
-  } catch (e) {
-    return emptyState();
-  }
-}
-function save() {
-  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch (e) { /* private mode: just don't save */ }
-}
-// Never trust saved/imported data: keep only known course ids and sensible values.
-function clean(s) {
-  const out = emptyState();
-  if (Array.isArray(s.done)) out.done = [...new Set(s.done.filter((id) => courseById[id]))];
-  out.uni = Math.max(0, Math.min(8, Math.floor(Number(s.uni) || 0)));
-  out.name = String(s.name || '').slice(0, 80);
-  out.start = /^\d{4}-[1-3]$/.test(s.start) ? s.start : '';
-  out.major = groupById[s.major] && groupById[s.major].type === 'Major' ? s.major : '';
-  if (Array.isArray(s.minors)) out.minors = s.minors.filter((id) => groupById[id] && groupById[id].type === 'Minor').slice(0, 2);
-  if (Array.isArray(s.slots)) s.slots.slice(0, 8).forEach((v, i) => {
-    if (v === 'none' || v === 'UNI' || (courseById[v] && !courseById[v].required)) out.slots[i] = v;
-  });
-  if (Array.isArray(s.breaks)) out.breaks = [...new Set(s.breaks.map(Number).filter((n) => n >= 2 && n <= 8))].sort((x, y) => x - y);
-  if (s.plan && typeof s.plan === 'object')
-    for (const [id, term] of Object.entries(s.plan))
-      if (courseById[id] && CONFIG.planTerms.includes(term)) out.plan[id] = term;
-  return out;
-}
-
-// ---------- small helpers ----------
-const $ = (sel) => document.querySelector(sel);
-const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
-const groupLabel = (g) => `${g.type}: ${g.name}`;
+let state = loadState();
+const save = () => saveState(state);
 
 // ---------- progress panel ----------
 function bar(n, total, cls = '') {
@@ -78,7 +37,7 @@ function renderProgress() {
         `<li class="${p.met ? 'met' : ''}"><span>${p.met ? '✓' : '○'}</span> ${esc(p.label)}</li>`).join('')}</ul>
       <p class="result">${ev.electivesMet ? 'Elective requirement met' : 'Elective requirement not met yet'}</p>
       <label class="uni">University electives completed
-        <input id="uni" type="number" min="0" max="8" value="${state.uni}"></label>
+        <input id="uni" type="number" min="0" max="${CONFIG.maxUni}" value="${state.uni}"></label>
       <p class="hint">Program options completed (each course counted once): <strong>${ev.D}</strong></p>
       <ul class="groups">${groupRows}</ul>
     </div>`;
@@ -93,21 +52,17 @@ function renderProgress() {
 }
 
 // ---------- course list ----------
-function filterOptions() {
-  const opts = [['all', 'All courses'], ['todo', 'Not completed'], ['next', `Offered ${nextTerm} (not completed)`],
-    ['required', 'Core courses']];
-  data.groups.forEach((g) => opts.push(['group:' + g.id, groupLabel(g)]));
-  return opts;
-}
+const filterOptions = () => [['all', 'All courses'], ['todo', 'Not completed'], ['next', `Offered ${nextTerm} (not completed)`],
+  ['required', 'Core courses'], ...groupFilterPairs()];
 
 function matches(c, filter, q) {
-  if (q && !(c.id + ' ' + c.name).toLowerCase().includes(q)) return false;
+  if (!textMatch(c, q)) return false;
   const done = state.done.includes(c.id);
   if (filter === 'todo') return !done;
   if (filter === 'next') return !done && Logic.offeredIn(data, c.id, nextTerm);
   if (filter === 'required') return c.required;
-  if (filter.startsWith('group:')) return c.groups.includes(filter.slice(6));
-  return true;
+  const g = filterGroup(filter);
+  return g ? c.groups.includes(g) : true;
 }
 
 function offeredBadge(c) {
@@ -123,8 +78,7 @@ function renderList() {
     const done = state.done.includes(c.id);
     const term = state.plan[c.id] || '';
     const check = Logic.planCheck(data, state, c.id, term);
-    const chips = (c.required ? '<span class="chip req">core</span>' : '') +
-      c.groups.map((id) => `<span class="chip ${groupById[id].type.toLowerCase()}">${esc(groupLabel(groupById[id]))}</span>`).join('');
+    const chips = (c.required ? '<span class="chip req">core</span>' : '') + groupChips(c);
     return `<div class="course ${done ? 'done' : ''}" data-id="${esc(c.id)}">
       <input type="checkbox" class="tick" aria-label="Completed: ${esc(c.name)}" ${done ? 'checked' : ''}>
       <div class="info">
@@ -148,13 +102,14 @@ function renderPlanSummary() {
   const rows = CONFIG.planTerms.map((term) => {
     const ids = Object.keys(state.plan).filter((id) => state.plan[id] === term && !state.done.includes(id));
     const credits = ids.reduce((t, id) => t + courseById[id].credits, 0);
-    const problems = ids.filter((id) => Logic.planCheck(data, state, id, term) !== 'OK');
-    const names = ids.map((id) => {
-      const ok = Logic.planCheck(data, state, id, term) === 'OK';
-      return `<li class="${ok ? '' : 'bad'}">${esc(id)} ${esc(courseById[id].name)}${ok ? '' : ' - ' + esc(Logic.planCheck(data, state, id, term))}</li>`;
+    const checks = ids.map((id) => [id, Logic.planCheck(data, state, id, term)]);
+    const problems = checks.filter(([, check]) => check !== 'OK').length;
+    const names = checks.map(([id, check]) => {
+      const ok = check === 'OK';
+      return `<li class="${ok ? '' : 'bad'}">${esc(id)} ${esc(courseById[id].name)}${ok ? '' : ' - ' + esc(check)}</li>`;
     }).join('');
     return `<div class="term"><h3>${term}</h3>
-      <p>${ids.length} course(s), ${credits} credit points${problems.length ? `, <span class="bad">${problems.length} problem(s)</span>` : ''}</p>
+      <p>${ids.length} course(s), ${credits} credit points${problems ? `, <span class="bad">${problems} problem(s)</span>` : ''}</p>
       <ul>${names}</ul></div>`;
   });
   $('#plan-summary').innerHTML = rows.join('');
@@ -210,7 +165,7 @@ $('#list').addEventListener('change', (e) => {
 
 $('#progress').addEventListener('change', (e) => {
   if (e.target.id !== 'uni') return;
-  state.uni = Math.max(0, Math.min(8, Math.floor(Number(e.target.value) || 0)));
+  state.uni = clampUni(e.target.value);
   save(); renderAll();
 });
 
@@ -240,7 +195,8 @@ $('#import').addEventListener('change', (e) => {
 });
 
 $('#reset').addEventListener('click', () => {
-  if (confirm('Restart the course planner? This clears your ticked courses, plans, name and the course sequence choices.')) { state = emptyState(); $('#name').value = ''; save(); try { localStorage.removeItem('course-planner.pool-folded'); } catch (e) { /* nothing to clear */ } renderAll(); }
+  if (!restartPlanner()) return;
+  state = emptyState(); $('#name').value = ''; renderAll();
 });
 
 // ---------- start ----------
@@ -249,5 +205,5 @@ new ResizeObserver(() => document.documentElement.style.setProperty('--bar-h', $
   .observe($('#student'));
 $('#program').textContent = data.program;
 $('#name').value = state.name;
-$('#filter').innerHTML = filterOptions().map(([v, label]) => `<option value="${esc(v)}">${esc(label)}</option>`).join('');
+$('#filter').innerHTML = optionsHtml(filterOptions());
 renderAll();
