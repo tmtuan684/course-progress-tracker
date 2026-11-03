@@ -1,5 +1,6 @@
 // courses.js - read-only table of all courses and the terms they are offered.
 const data = window.DATA;
+const HANDBOOK_URL = 'https://handbook.rmit.edu.au/ords/r/rmit/catalogue/program?p5_code=BP162VI23';
 const groupById = Object.fromEntries(data.groups.map((g) => [g.id, g]));
 const $ = (sel) => document.querySelector(sel);
 const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -14,6 +15,20 @@ function offeringCell(c, term) {
   return '<td class="off no">Not offered</td>';
 }
 
+// Prerequisite cell: codes in the handbook text are shown with the course name.
+function prereqCell(c) {
+  const p = c.prereq;
+  if (!p) return '<td class="prereq none">Check the <a href="' + HANDBOOK_URL + '" target="_blank" rel="noopener">RMIT Course Handbook</a></td>';
+  const note = p.note ? ` title="${esc(p.note)}"` : '';
+  if (!p.text) return `<td class="prereq"${note}>None listed <small>(${esc(p.source)})</small></td>`;
+  const html = esc(p.text).replace(/[A-Z]{4}\d{4}/g, (code) => {
+    const r = data.courses.find((x) => x.id === code);
+    return r ? `<strong>${code}</strong> ${esc(r.name)}` : code;
+  });
+  const flag = /confirm/i.test(p.note) ? ' <span class="chip muted" title="' + esc(p.note) + '">to confirm</span>' : '';
+  return `<td class="prereq"${note}>${html} <small>(${esc(p.source)})</small>${flag}</td>`;
+}
+
 function matches(c, filter, offered, q) {
   if (q && !(c.id + ' ' + c.name).toLowerCase().includes(q)) return false;
   if (filter === 'required' && !c.required) return false;
@@ -26,12 +41,13 @@ function matches(c, filter, offered, q) {
 function render() {
   const q = $('#search').value.trim().toLowerCase();
   const list = data.courses.filter((c) => matches(c, $('#filter').value, $('#offered').value, q));
-  const head = `<thead><tr><th>Code</th><th>Course</th><th>Credits</th><th>Type</th><th>Majors / minors</th>${
+  const head = `<thead><tr><th>Code</th><th>Course</th><th>Credits</th><th>Type</th><th>Majors / minors</th><th>Prerequisites</th>${
     data.terms.map((t) => `<th>${esc(t)}</th>`).join('')}</tr></thead>`;
   const body = list.map((c) => `<tr>
     <td><strong>${esc(c.id)}</strong></td><td>${esc(c.name)}</td><td>${c.credits}</td>
     <td>${c.required ? '<span class="chip req">' + esc(c.category || 'Core') + '</span>' : 'Elective'}</td>
     <td>${c.groups.map((id) => `<span class="chip ${groupById[id].type.toLowerCase()}">${esc(groupLabel(groupById[id]))}</span>`).join(' ')}</td>
+    ${prereqCell(c)}
     ${data.terms.map((t) => offeringCell(c, t)).join('')}</tr>`).join('');
   $('#table').innerHTML = head + `<tbody>${body}</tbody>`;
   $('#count').textContent = `${list.length} of ${data.courses.length} courses (SGS offering)`;

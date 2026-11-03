@@ -13,6 +13,9 @@
       <p id="program"></p>
     </div>
     <nav><a href="index.html">My progress</a><a href="courses.html">Course list</a><a href="sequence.html" class="current">Course sequence</a></nav>
+    <div class="actions">
+      <button id="restart" class="danger">Restart planner</button>
+    </div>
   </header>
 
   <main class="wide">
@@ -49,6 +52,7 @@
           <select id="pool-filter" aria-label="Filter courses"></select>
         </div>
         <button id="pool-reset" class="linkbtn">Reset my choices</button>
+        <div id="pool-selection" aria-live="polite"></div>
         <div id="pool-list"></div>
         </div>
       </aside>

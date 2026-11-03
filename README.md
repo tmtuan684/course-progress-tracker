@@ -48,16 +48,16 @@ Keep all files in one folder and double-click `index.html`. To share it with stu
 
 The header menu switches between **My progress** and **Course list**.
 
-1. Tick **Completed** on each finished course. **Shift+click** a second tick box to tick (or untick) every course between it and the last box you clicked; the list order follows the current search and filter. The left panel updates core courses, the four pathways and per-major/minor progress; credit points update in the bar beside the student name, which stays fixed at the top while scrolling.
+1. Tick **Completed** on each finished course. **Shift+click** a second tick box to tick (or untick) every course between it and the last box you clicked; the list order follows the current search and filter. The left panel updates: core courses, the four pathways, per-major/minor progress, and credit points.
 2. Enter the number of university electives completed.
 3. Use the search box and filter (all, not completed, offered next term, core, or a single major/minor) to find courses.
-4. Pick a term in **Plan for…** to check the course is offered. The Semester plan pane on the right (below the list on narrower screens) shows courses, credits and problems per term.
+4. Pick a term in **Plan for…** to check the course is offered. The Semester plan section shows courses, credits and problems per term.
 5. **Download PDF report** opens the print dialog with a one-page report (name, date, progress, completed courses, semester plan); choose "Save as PDF". Type your name in the box under the header first.
 6. **Export progress** saves a JSON file; **Import** loads it back (for another computer or a backup). **Restart planner** (on both My progress and Course sequence) clears everything: ticks, plans, name, starting term, breaks, major/minors and chosen courses.
 
 ### Course list page
 
-Open **Course list** to browse all courses with their type, credits, majors/minors and a column per term showing Offered, Not offered or Cancelled. Search by code or name, filter by core, elective or a single major/minor, or show only courses offered in a chosen term. It does not change the student's progress.
+Open **Course list** to browse all courses with their type, credits, majors/minors and a column per term showing Offered, Not offered or Cancelled. Search by code or name, filter by core, elective or a single major/minor, or show only courses offered in a chosen term. It does not change the student's progress. A **Prerequisites** column shows the enforced requisites we could confirm, and otherwise tells the student to check the RMIT Course Handbook (with a link). The handbook only flags that a course has a requisite and does not name it, and the RMIT course pages describe City-campus and older versions, so only clear cases are recorded. They come from `tools/prerequisites.csv` (columns: `code`, `requisites`, `source`, `note`), which `make_data.py` reads into `data.js`. Paste the handbook's "Enforced Course Requisites" text into the `requisites` column (SGS codes), leave it empty when none are listed, and rerun `make_data.py`. A note containing the word "confirm" shows a "to confirm" tag.
 
 ### Course sequence page
 
@@ -71,7 +71,9 @@ The **Pick courses** panel (right side, below on phones) lists every elective co
 
 ## Updating the data
 
-1. Update `Course_List.xlsx` (course lists, or the offering schedule sheet).
+Majors and minors come from the handbook text. Each major or minor has its own file in `tools/handbook/` (see the README there). To update one, paste the handbook page text into its file (the first line must read `Major: <name>` or `Minor: <name>`); the credit points, courses and 2026 teaching periods are read from it. The core courses and the offering schedule still come from `Course_List.xlsx`.
+
+1. Update the files in `tools/handbook/` and, if needed, `Course_List.xlsx`.
 2. From this folder run: `python3 -I tools/make_data.py ../Course_List.xlsx data.js`
 3. Refresh the page.
 
@@ -87,8 +89,8 @@ For a new academic year, also check:
 
 - Elective credits are assumed to be 12 each (Studio core courses 24); university electives count 12 each (`uniCredits` in `logic.js`).
 - Offering data covers 2026-3 at Saigon South only. Later terms show "No schedule yet".
-- About 11 major/minor courses are not in the 2026 schedule and show "Not in schedule".
-- Digital Economy has no published course list, so it can't be completed.
+- Majors and minors come from the handbook text in `tools/handbook/`. Courses the handbook lists with no 2026 sessions (for example Developing Blockchain Applications) show as not offered. Where the schedule file and the handbook disagree on terms (so far only Principles of Psychology), the schedule file is used.
+- The handbook says the Enterprise Systems Development minor is 36 credit points (3 courses), but every other minor is 48 and the degree needs 96 elective points, so `NEED_OVERRIDE` in `make_data.py` keeps it at 4 courses until that is confirmed. Remove that line to follow the handbook.
 - A core course is assumed not to count toward a minor. Change `electiveDone` in `logic.js` if the rule allows it.
 - Progress lives in each student's own browser; there are no accounts and no shared records.
 - Tested in headless Chromium only; not yet checked on phones or other browsers.

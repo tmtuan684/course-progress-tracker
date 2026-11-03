@@ -1,0 +1,9 @@
+code,requisites,source,note
+COSC3089,,RMIT course page,The course page lists no enforced prerequisite for this code.
+COSC3060,COSC3107,program plan,The program plan draws an arrow from COSC3107; please confirm in the RMIT Course Handbook
+ISYS3416,"COSC3107, or Java Programming Studio, or Engineering Computing 1",RMIT course page,From the RMIT course page. Other equivalent courses may count; check the RMIT Course Handbook.
+COSC2766,"COSC3107, or another introductory programming course listed in the Handbook",RMIT course page,From the RMIT course page. The page lists several earlier programming courses as alternatives; check the RMIT Course Handbook.
+COSC2767,ISYS3416,program plan,From an arrow in the program plan PDF; check the RMIT Course Handbook
+COSC2101,"ISYS3416 AND COSC2440, or equivalent courses listed in the Handbook",RMIT course page,"From the RMIT course page: Software Engineering Fundamentals (ISYS3416) AND Further Programming (COSC2440), or the equivalents it lists. Check the RMIT Course Handbook."
+COSC2502,"COSC2101, or ISYS2101, or an equivalent listed in the Handbook",RMIT course page,From the RMIT course page. Check the RMIT Course Handbook for the full list of alternatives.
+COSC2503,ISYS2101,program plan,From an arrow in the program plan PDF; the course page lists no enforced prerequisite. Check the RMIT Course Handbook

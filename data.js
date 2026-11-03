@@ -14,7 +14,8 @@ window.DATA = {
    "credits": 12,
    "required": true,
    "category": "Core",
-   "groups": []
+   "groups": [],
+   "prereq": null
   },
   {
    "id": "COSC2174",
@@ -23,7 +24,11 @@ window.DATA = {
    "credits": 12,
    "required": true,
    "category": "Core",
-   "groups": []
+   "groups": [
+    "major:cyber-security",
+    "minor:cyber-assurance"
+   ],
+   "prereq": null
   },
   {
    "id": "INTE2633",
@@ -32,7 +37,8 @@ window.DATA = {
    "credits": 12,
    "required": true,
    "category": "Core",
-   "groups": []
+   "groups": [],
+   "prereq": null
   },
   {
    "id": "COSC3089",
@@ -41,7 +47,12 @@ window.DATA = {
    "credits": 12,
    "required": true,
    "category": "Core",
-   "groups": []
+   "groups": [],
+   "prereq": {
+    "text": "",
+    "source": "RMIT course page",
+    "note": "The course page lists no enforced prerequisite for this code."
+   }
   },
   {
    "id": "COSC3107",
@@ -50,7 +61,8 @@ window.DATA = {
    "credits": 24,
    "required": true,
    "category": "Core",
-   "groups": []
+   "groups": [],
+   "prereq": null
   },
   {
    "id": "COSC3110",
@@ -59,7 +71,8 @@ window.DATA = {
    "credits": 12,
    "required": true,
    "category": "Core",
-   "groups": []
+   "groups": [],
+   "prereq": null
   },
   {
    "id": "COSC3060",
@@ -68,7 +81,12 @@ window.DATA = {
    "credits": 24,
    "required": true,
    "category": "Core",
-   "groups": []
+   "groups": [],
+   "prereq": {
+    "text": "COSC3107",
+    "source": "program plan",
+    "note": "The program plan draws an arrow from COSC3107; please confirm in the RMIT Course Handbook"
+   }
   },
   {
    "id": "ISYS3416",
@@ -77,7 +95,12 @@ window.DATA = {
    "credits": 12,
    "required": true,
    "category": "Core",
-   "groups": []
+   "groups": [],
+   "prereq": {
+    "text": "COSC3107, or Java Programming Studio, or Engineering Computing 1",
+    "source": "RMIT course page",
+    "note": "From the RMIT course page. Other equivalent courses may count; check the RMIT Course Handbook."
+   }
   },
   {
    "id": "COSC2766",
@@ -88,7 +111,12 @@ window.DATA = {
    "category": "Core",
    "groups": [
     "minor:cloud-computing"
-   ]
+   ],
+   "prereq": {
+    "text": "COSC3107, or another introductory programming course listed in the Handbook",
+    "source": "RMIT course page",
+    "note": "From the RMIT course page. The page lists several earlier programming courses as alternatives; check the RMIT Course Handbook."
+   }
   },
   {
    "id": "COSC2767",
@@ -97,7 +125,12 @@ window.DATA = {
    "credits": 12,
    "required": true,
    "category": "Core",
-   "groups": []
+   "groups": [],
+   "prereq": {
+    "text": "ISYS3416",
+    "source": "program plan",
+    "note": "From an arrow in the program plan PDF; check the RMIT Course Handbook"
+   }
   },
   {
    "id": "ISYS2101",
@@ -106,7 +139,8 @@ window.DATA = {
    "credits": 12,
    "required": true,
    "category": "Core",
-   "groups": []
+   "groups": [],
+   "prereq": null
   },
   {
    "id": "COSC2968",
@@ -115,7 +149,8 @@ window.DATA = {
    "credits": 12,
    "required": true,
    "category": "STEM Future Tech",
-   "groups": []
+   "groups": [],
+   "prereq": null
   },
   {
    "id": "COSC2502",
@@ -124,7 +159,12 @@ window.DATA = {
    "credits": 12,
    "required": true,
    "category": "Capstone",
-   "groups": []
+   "groups": [],
+   "prereq": {
+    "text": "COSC2101, or ISYS2101, or an equivalent listed in the Handbook",
+    "source": "RMIT course page",
+    "note": "From the RMIT course page. Check the RMIT Course Handbook for the full list of alternatives."
+   }
   },
   {
    "id": "COSC2503",
@@ -133,513 +173,715 @@ window.DATA = {
    "credits": 12,
    "required": true,
    "category": "Capstone",
-   "groups": []
-  },
-  {
-   "id": "COSC2440",
-   "hn": "COSC2731",
-   "name": "Further Programming",
-   "credits": 12,
-   "required": false,
-   "category": null,
-   "groups": [
-    "major:enterprise-systems-development",
-    "minor:enterprise-systems-development"
-   ]
-  },
-  {
-   "id": "COSC2469",
-   "hn": "COSC2722",
-   "name": "Algorithms and Analysis",
-   "credits": 12,
-   "required": false,
-   "category": null,
-   "groups": [
-    "major:enterprise-systems-development",
-    "minor:enterprise-systems-development"
-   ]
-  },
-  {
-   "id": "COSC2769",
-   "hn": "COSC2808",
-   "name": "Full Stack Development",
-   "credits": 12,
-   "required": false,
-   "category": null,
-   "groups": [
-    "major:enterprise-systems-development",
-    "minor:enterprise-systems-development"
-   ]
-  },
-  {
-   "id": "COSC2101",
-   "hn": "COSC2732",
-   "name": "Software Engineering: Process and Tools",
-   "credits": 12,
-   "required": false,
-   "category": null,
-   "groups": [
-    "major:enterprise-systems-development",
-    "minor:enterprise-systems-development"
-   ]
-  },
-  {
-   "id": "ISYS2092",
-   "hn": "ISYS3397",
-   "name": "Software Testing",
-   "credits": 12,
-   "required": false,
-   "category": null,
-   "groups": [
-    "major:enterprise-systems-development",
-    "minor:enterprise-systems-development"
-   ]
-  },
-  {
-   "id": "ISYS2099",
-   "hn": "ISYS3434",
-   "name": "Database Applications",
-   "credits": 12,
-   "required": false,
-   "category": null,
-   "groups": [
-    "major:enterprise-systems-development",
-    "minor:enterprise-systems-development"
-   ]
-  },
-  {
-   "id": "COSC3062",
-   "hn": "COSC3063",
-   "name": "iPhone Software Engineering",
-   "credits": 12,
-   "required": false,
-   "category": null,
-   "groups": [
-    "major:enterprise-systems-development",
-    "minor:enterprise-systems-development"
-   ]
-  },
-  {
-   "id": "COSC2790",
-   "hn": "COSC2810",
-   "name": "Programming Internet of Things (IoT)",
-   "credits": 12,
-   "required": false,
-   "category": null,
-   "groups": [
-    "major:enterprise-systems-development",
-    "minor:enterprise-systems-development"
-   ]
-  },
-  {
-   "id": "COSC3092",
-   "hn": "COSC3093",
-   "name": "Enterprise Application Development",
-   "credits": 12,
-   "required": false,
-   "category": null,
-   "groups": [
-    "major:enterprise-systems-development",
-    "minor:enterprise-systems-development"
-   ]
-  },
-  {
-   "id": "COSC2543",
-   "hn": "COSC2729",
-   "name": "Mobile Application Development",
-   "credits": 12,
-   "required": false,
-   "category": null,
-   "groups": [
-    "major:enterprise-systems-development",
-    "minor:enterprise-systems-development"
-   ]
-  },
-  {
-   "id": "BESC1525",
-   "hn": "BESC1554",
-   "name": "Principles of Psychology",
-   "credits": 12,
-   "required": false,
-   "category": null,
-   "groups": [
-    "major:digital-innovation"
-   ]
-  },
-  {
-   "id": "COSC2789",
-   "hn": "COSC2809",
-   "name": "Practical Data Science",
-   "credits": 12,
-   "required": false,
-   "category": null,
-   "groups": [
-    "major:digital-innovation",
-    "minor:data-science"
-   ]
-  },
-  {
-   "id": "054381",
-   "hn": null,
-   "name": "Introduction to Cyber Security Governance",
-   "credits": 12,
-   "required": false,
-   "category": null,
-   "groups": [
-    "major:digital-innovation",
-    "major:cyber-security"
-   ]
-  },
-  {
-   "id": "COSC2822",
-   "hn": "COSC2937",
-   "name": "Cloud Developing",
-   "credits": 12,
-   "required": false,
-   "category": null,
-   "groups": [
-    "major:digital-innovation",
-    "minor:cloud-computing"
-   ]
-  },
-  {
-   "id": "COSC2930",
-   "hn": "COSC2936",
-   "name": "Cloud Architecting",
-   "credits": 12,
-   "required": false,
-   "category": null,
-   "groups": [
-    "major:digital-innovation",
-    "minor:cloud-computing"
-   ]
-  },
-  {
-   "id": "041605",
-   "hn": null,
-   "name": "Applied Entrepreneurship",
-   "credits": 12,
-   "required": false,
-   "category": null,
-   "groups": [
-    "major:digital-innovation",
-    "minor:entrepreneurship"
-   ]
-  },
-  {
-   "id": "001412",
-   "hn": null,
-   "name": "Managing Change",
-   "credits": 12,
-   "required": false,
-   "category": null,
-   "groups": [
-    "major:digital-innovation"
-   ]
-  },
-  {
-   "id": "054994",
-   "hn": null,
-   "name": "Digital Innovation Case Studies",
-   "credits": 12,
-   "required": false,
-   "category": null,
-   "groups": [
-    "major:digital-innovation"
-   ]
+   "groups": [],
+   "prereq": {
+    "text": "ISYS2101",
+    "source": "program plan",
+    "note": "From an arrow in the program plan PDF; the course page lists no enforced prerequisite. Check the RMIT Course Handbook"
+   }
   },
   {
    "id": "COSC2539",
-   "hn": "COSC2716",
+   "hn": null,
    "name": "Security in Computing and Information Technology",
    "credits": 12,
    "required": false,
-   "category": null,
+   "category": "Major",
    "groups": [
     "major:cyber-security",
     "minor:cyber-assurance"
-   ]
+   ],
+   "prereq": null
   },
   {
    "id": "INTE2548",
-   "hn": "INTE2577",
+   "hn": null,
    "name": "Security Testing",
    "credits": 12,
    "required": false,
-   "category": null,
+   "category": "Major",
    "groups": [
     "major:cyber-security",
     "minor:cyber-assurance"
-   ]
+   ],
+   "prereq": null
+  },
+  {
+   "id": "INTE2585",
+   "hn": null,
+   "name": "Introduction to Cybersecurity Governance",
+   "credits": 12,
+   "required": false,
+   "category": "Major",
+   "groups": [
+    "major:cyber-security",
+    "major:digital-innovation"
+   ],
+   "prereq": null
   },
   {
    "id": "INTE2635",
-   "hn": "INTE2636",
+   "hn": null,
    "name": "Cyber Security Attack Analysis and Incidence Response",
    "credits": 12,
    "required": false,
-   "category": null,
+   "category": "Major",
    "groups": [
     "major:cyber-security",
     "minor:cyber-assurance"
-   ]
+   ],
+   "prereq": null
   },
   {
    "id": "INTE2637",
-   "hn": "INTE2638",
+   "hn": null,
    "name": "Secure Electronic Commerce",
    "credits": 12,
    "required": false,
-   "category": null,
+   "category": "Major",
    "groups": [
     "major:cyber-security"
-   ]
+   ],
+   "prereq": null
   },
   {
    "id": "INTE2639",
-   "hn": "INTE2640",
+   "hn": null,
    "name": "Cloud Security",
    "credits": 12,
    "required": false,
-   "category": null,
+   "category": "Major",
    "groups": [
     "major:cyber-security",
     "minor:cloud-computing",
     "minor:cyber-assurance"
-   ]
+   ],
+   "prereq": null
+  },
+  {
+   "id": "INTE2706",
+   "hn": null,
+   "name": "Developing Blockchain Applications",
+   "credits": 12,
+   "required": false,
+   "category": "Major",
+   "groups": [
+    "major:cyber-security"
+   ],
+   "prereq": null
   },
   {
    "id": "INTE2641",
-   "hn": "INTE2642",
+   "hn": null,
    "name": "Blockchain Technology Fundamentals",
    "credits": 12,
    "required": false,
-   "category": null,
+   "category": "Major",
    "groups": [
     "major:cyber-security"
-   ]
+   ],
+   "prereq": null
   },
   {
    "id": "COSC3079",
-   "hn": "COSC3080",
+   "hn": null,
    "name": "Computer and Internet Forensics",
    "credits": 12,
    "required": false,
-   "category": null,
+   "category": "Major",
    "groups": [
     "major:cyber-security",
     "minor:cyber-assurance"
-   ]
+   ],
+   "prereq": null
+  },
+  {
+   "id": "BESC1525",
+   "hn": null,
+   "name": "Principles of Psychology",
+   "credits": 12,
+   "required": false,
+   "category": "Major",
+   "groups": [
+    "major:digital-innovation"
+   ],
+   "prereq": null
+  },
+  {
+   "id": "BUSM3312",
+   "hn": null,
+   "name": "Managing Change",
+   "credits": 12,
+   "required": false,
+   "category": "Major",
+   "groups": [
+    "major:digital-innovation"
+   ],
+   "prereq": null
+  },
+  {
+   "id": "COSC2822",
+   "hn": null,
+   "name": "Cloud Developing",
+   "credits": 12,
+   "required": false,
+   "category": "Major",
+   "groups": [
+    "major:digital-innovation",
+    "minor:cloud-computing"
+   ],
+   "prereq": null
+  },
+  {
+   "id": "COSC2789",
+   "hn": null,
+   "name": "Practical Data Science",
+   "credits": 12,
+   "required": false,
+   "category": "Major",
+   "groups": [
+    "major:digital-innovation",
+    "minor:data-science"
+   ],
+   "prereq": null
+  },
+  {
+   "id": "COSC2930",
+   "hn": null,
+   "name": "Cloud Architecting",
+   "credits": 12,
+   "required": false,
+   "category": "Major",
+   "groups": [
+    "major:digital-innovation",
+    "minor:cloud-computing"
+   ],
+   "prereq": null
+  },
+  {
+   "id": "BUSM4092",
+   "hn": null,
+   "name": "Applied Entrepreneurship",
+   "credits": 12,
+   "required": false,
+   "category": "Major",
+   "groups": [
+    "major:digital-innovation",
+    "minor:entrepreneurship"
+   ],
+   "prereq": null
+  },
+  {
+   "id": "COSC3163",
+   "hn": null,
+   "name": "UI and UX for Apple Platform",
+   "credits": 12,
+   "required": false,
+   "category": "Major",
+   "groups": [
+    "major:digital-innovation"
+   ],
+   "prereq": null
+  },
+  {
+   "id": "COSC3165",
+   "hn": null,
+   "name": "Getting Started with iOS App Development",
+   "credits": 12,
+   "required": false,
+   "category": "Major",
+   "groups": [
+    "major:digital-innovation"
+   ],
+   "prereq": null
+  },
+  {
+   "id": "COSC2440",
+   "hn": null,
+   "name": "Further Programming",
+   "credits": 12,
+   "required": false,
+   "category": "Major",
+   "groups": [
+    "major:enterprise-systems-development"
+   ],
+   "prereq": null
+  },
+  {
+   "id": "COSC2469",
+   "hn": null,
+   "name": "Algorithms and Analysis",
+   "credits": 12,
+   "required": false,
+   "category": "Major",
+   "groups": [
+    "major:enterprise-systems-development",
+    "minor:enterprise-systems-development"
+   ],
+   "prereq": null
+  },
+  {
+   "id": "COSC2769",
+   "hn": null,
+   "name": "Full Stack Development",
+   "credits": 12,
+   "required": false,
+   "category": "Major",
+   "groups": [
+    "major:enterprise-systems-development",
+    "minor:enterprise-systems-development"
+   ],
+   "prereq": null
+  },
+  {
+   "id": "ISYS2092",
+   "hn": null,
+   "name": "Software Testing",
+   "credits": 12,
+   "required": false,
+   "category": "Major",
+   "groups": [
+    "major:enterprise-systems-development",
+    "minor:enterprise-systems-development"
+   ],
+   "prereq": null
+  },
+  {
+   "id": "ISYS2099",
+   "hn": null,
+   "name": "Database Applications",
+   "credits": 12,
+   "required": false,
+   "category": "Major",
+   "groups": [
+    "major:enterprise-systems-development",
+    "minor:enterprise-systems-development"
+   ],
+   "prereq": null
+  },
+  {
+   "id": "COSC2450",
+   "hn": null,
+   "name": "Web Development Technologies",
+   "credits": 12,
+   "required": false,
+   "category": "Major",
+   "groups": [
+    "major:enterprise-systems-development",
+    "minor:enterprise-systems-development"
+   ],
+   "prereq": null
+  },
+  {
+   "id": "COSC3062",
+   "hn": null,
+   "name": "iPhone Software Engineering",
+   "credits": 12,
+   "required": false,
+   "category": "Major",
+   "groups": [
+    "major:enterprise-systems-development",
+    "minor:enterprise-systems-development"
+   ],
+   "prereq": null
+  },
+  {
+   "id": "COSC2101",
+   "hn": null,
+   "name": "Software Engineering: Process and Tools",
+   "credits": 12,
+   "required": false,
+   "category": "Major",
+   "groups": [
+    "major:enterprise-systems-development",
+    "minor:enterprise-systems-development"
+   ],
+   "prereq": {
+    "text": "ISYS3416 AND COSC2440, or equivalent courses listed in the Handbook",
+    "source": "RMIT course page",
+    "note": "From the RMIT course page: Software Engineering Fundamentals (ISYS3416) AND Further Programming (COSC2440), or the equivalents it lists. Check the RMIT Course Handbook."
+   }
+  },
+  {
+   "id": "COSC2790",
+   "hn": null,
+   "name": "Programming Internet of Things",
+   "credits": 12,
+   "required": false,
+   "category": "Major",
+   "groups": [
+    "major:enterprise-systems-development",
+    "minor:enterprise-systems-development"
+   ],
+   "prereq": null
+  },
+  {
+   "id": "ISYS3461",
+   "hn": null,
+   "name": "Systems Architecture and Design",
+   "credits": 12,
+   "required": false,
+   "category": "Major",
+   "groups": [
+    "major:enterprise-systems-development"
+   ],
+   "prereq": null
+  },
+  {
+   "id": "COSC3159",
+   "hn": null,
+   "name": "Usability Engineering",
+   "credits": 12,
+   "required": false,
+   "category": "Major",
+   "groups": [
+    "major:enterprise-systems-development"
+   ],
+   "prereq": null
+  },
+  {
+   "id": "COSC3162",
+   "hn": null,
+   "name": "Software Requirements Engineering",
+   "credits": 12,
+   "required": false,
+   "category": "Major",
+   "groups": [
+    "major:enterprise-systems-development"
+   ],
+   "prereq": null
+  },
+  {
+   "id": "COSC3092",
+   "hn": null,
+   "name": "Enterprise Application Development 1",
+   "credits": 12,
+   "required": false,
+   "category": "Major",
+   "groups": [
+    "major:enterprise-systems-development",
+    "minor:enterprise-systems-development"
+   ],
+   "prereq": null
+  },
+  {
+   "id": "COSC2543",
+   "hn": null,
+   "name": "Mobile Application Development",
+   "credits": 12,
+   "required": false,
+   "category": "Major",
+   "groups": [
+    "major:enterprise-systems-development",
+    "minor:enterprise-systems-development"
+   ],
+   "prereq": null
   },
   {
    "id": "COSC2129",
-   "hn": "COSC2723",
+   "hn": null,
    "name": "Artificial Intelligence",
    "credits": 12,
    "required": false,
-   "category": null,
+   "category": "Minor",
    "groups": [
     "minor:ai-and-machine-learning"
-   ]
+   ],
+   "prereq": null
   },
   {
    "id": "COSC3066",
-   "hn": "COSC3067",
+   "hn": null,
    "name": "Games and Artificial Intelligence Techniques",
    "credits": 12,
    "required": false,
-   "category": null,
+   "category": "Minor",
    "groups": [
     "minor:ai-and-machine-learning",
     "minor:creative-computing"
-   ]
+   ],
+   "prereq": null
   },
   {
    "id": "COSC2753",
-   "hn": "COSC2812",
+   "hn": null,
    "name": "Machine Learning",
    "credits": 12,
    "required": false,
-   "category": null,
+   "category": "Minor",
    "groups": [
     "minor:ai-and-machine-learning"
-   ]
+   ],
+   "prereq": null
   },
   {
    "id": "COSC3068",
-   "hn": "COSC3069",
+   "hn": null,
    "name": "Deep Learning",
    "credits": 12,
    "required": false,
-   "category": null,
+   "category": "Minor",
    "groups": [
     "minor:ai-and-machine-learning"
-   ]
+   ],
+   "prereq": null
   },
   {
-   "id": "COSC3081",
-   "hn": "COSC3082",
-   "name": "Advanced Programming for Data Science",
+   "id": "ISYS3490",
+   "hn": null,
+   "name": "Managing Semi-structured and Unstructured Data",
    "credits": 12,
    "required": false,
-   "category": null,
+   "category": "Minor",
    "groups": [
-    "minor:data-science"
-   ]
+    "minor:ai-and-machine-learning"
+   ],
+   "prereq": null
   },
   {
-   "id": "MATH2459",
-   "hn": "MATH2460",
-   "name": "Data Visualisation with R",
+   "id": "COSC3167",
+   "hn": null,
+   "name": "Social Media and Networks Analytics",
    "credits": 12,
    "required": false,
-   "category": null,
+   "category": "Minor",
    "groups": [
-    "minor:data-science"
-   ]
+    "minor:ai-and-machine-learning"
+   ],
+   "prereq": null
   },
   {
-   "id": "COSC3077",
-   "hn": "COSC3078",
-   "name": "The Data Science Professional",
+   "id": "COSC3070",
+   "hn": null,
+   "name": "Programming Autonomous Robots",
    "credits": 12,
    "required": false,
-   "category": null,
+   "category": "Minor",
    "groups": [
-    "minor:data-science"
-   ]
+    "minor:ai-and-machine-learning"
+   ],
+   "prereq": null
   },
   {
    "id": "COSC2825",
-   "hn": "COSC2935",
+   "hn": null,
    "name": "Cloud Operations",
    "credits": 12,
    "required": false,
-   "category": null,
+   "category": "Minor",
    "groups": [
     "minor:cloud-computing"
-   ]
+   ],
+   "prereq": null
+  },
+  {
+   "id": "COSC2638",
+   "hn": null,
+   "name": "Cloud Computing",
+   "credits": 12,
+   "required": false,
+   "category": "Minor",
+   "groups": [
+    "minor:cloud-computing"
+   ],
+   "prereq": null
   },
   {
    "id": "COSC3072",
-   "hn": "COSC3073",
+   "hn": null,
    "name": "Games Studio 1",
    "credits": 12,
    "required": false,
-   "category": null,
+   "category": "Minor",
    "groups": [
     "minor:creative-computing"
-   ]
+   ],
+   "prereq": null
   },
   {
-   "id": "044481",
+   "id": "COSC3169",
+   "hn": null,
+   "name": "Games Studio 2",
+   "credits": 12,
+   "required": false,
+   "category": "Minor",
+   "groups": [
+    "minor:creative-computing"
+   ],
+   "prereq": null
+  },
+  {
+   "id": "COSC3074",
    "hn": null,
    "name": "Mixed Reality",
    "credits": 12,
    "required": false,
-   "category": null,
+   "category": "Minor",
    "groups": [
     "minor:creative-computing"
-   ]
+   ],
+   "prereq": null
   },
   {
-   "id": "004201",
+   "id": "COSC3081",
    "hn": null,
-   "name": "Interactive 3D Graphics and Animation",
+   "name": "Advanced Programming for Data Science",
    "credits": 12,
    "required": false,
-   "category": null,
+   "category": "Minor",
    "groups": [
-    "minor:creative-computing"
-   ]
+    "minor:data-science"
+   ],
+   "prereq": null
   },
   {
-   "id": "014202",
+   "id": "MATH2459",
+   "hn": null,
+   "name": "Data Visualisation with R",
+   "credits": 12,
+   "required": false,
+   "category": "Minor",
+   "groups": [
+    "minor:data-science"
+   ],
+   "prereq": null
+  },
+  {
+   "id": "MATH2474",
+   "hn": null,
+   "name": "Practical Statistics",
+   "credits": 12,
+   "required": false,
+   "category": "Minor",
+   "groups": [
+    "minor:data-science"
+   ],
+   "prereq": null
+  },
+  {
+   "id": "COSC3171",
+   "hn": null,
+   "name": "Case Studies in Data Science",
+   "credits": 12,
+   "required": false,
+   "category": "Minor",
+   "groups": [
+    "minor:data-science"
+   ],
+   "prereq": null
+  },
+  {
+   "id": "COSC3077",
+   "hn": null,
+   "name": "The Data Science Professional",
+   "credits": 12,
+   "required": false,
+   "category": "Minor",
+   "groups": [
+    "minor:data-science"
+   ],
+   "prereq": null
+  },
+  {
+   "id": "ECON1624",
+   "hn": null,
+   "name": "Economic Foundations of the Digital World",
+   "credits": 12,
+   "required": false,
+   "category": "Minor",
+   "groups": [
+    "minor:digital-economy"
+   ],
+   "prereq": null
+  },
+  {
+   "id": "INTE2581",
+   "hn": null,
+   "name": "Digital Economy and Blockchain Applications",
+   "credits": 12,
+   "required": false,
+   "category": "Minor",
+   "groups": [
+    "minor:digital-economy"
+   ],
+   "prereq": null
+  },
+  {
+   "id": "ECON1558",
+   "hn": null,
+   "name": "Frontiers of the Digital Economy",
+   "credits": 12,
+   "required": false,
+   "category": "Minor",
+   "groups": [
+    "minor:digital-economy"
+   ],
+   "prereq": null
+  },
+  {
+   "id": "BAFI3250",
+   "hn": null,
+   "name": "Cryptofinance & Cryptocurrency",
+   "credits": 12,
+   "required": false,
+   "category": "Minor",
+   "groups": [
+    "minor:digital-economy"
+   ],
+   "prereq": null
+  },
+  {
+   "id": "BUSM3299",
    "hn": null,
    "name": "The Foundations of Entrepreneurship",
    "credits": 12,
    "required": false,
-   "category": null,
+   "category": "Minor",
    "groups": [
     "minor:entrepreneurship"
-   ]
+   ],
+   "prereq": null
   },
   {
-   "id": "014213",
+   "id": "BUSM4294",
    "hn": null,
    "name": "Driving Innovation in Organisations",
    "credits": 12,
    "required": false,
-   "category": null,
+   "category": "Minor",
    "groups": [
     "minor:entrepreneurship"
-   ]
+   ],
+   "prereq": null
   },
   {
-   "id": "041607",
+   "id": "BUSM4186",
    "hn": null,
    "name": "Entrepreneurship and Global Challenges",
    "credits": 12,
    "required": false,
-   "category": null,
+   "category": "Minor",
    "groups": [
     "minor:entrepreneurship"
-   ]
+   ],
+   "prereq": null
   }
  ],
  "groups": [
   {
-   "id": "major:enterprise-systems-development",
-   "type": "Major",
-   "name": "Enterprise Systems Development",
-   "rule": "Choose 8 (Further Programming mandatory)",
-   "members": [
-    "COSC2440",
-    "COSC2469",
-    "COSC2769",
-    "COSC2101",
-    "ISYS2092",
-    "ISYS2099",
-    "COSC3062",
-    "COSC2790",
-    "COSC3092",
-    "COSC2543"
-   ],
-   "mandatory": [
-    "COSC2440"
-   ],
-   "need": 8
-  },
-  {
-   "id": "major:digital-innovation",
-   "type": "Major",
-   "name": "Digital Innovation",
-   "rule": "8 courses",
-   "members": [
-    "BESC1525",
-    "COSC2789",
-    "054381",
-    "COSC2822",
-    "COSC2930",
-    "041605",
-    "001412",
-    "054994"
-   ],
-   "mandatory": [],
-   "need": 8
-  },
-  {
    "id": "major:cyber-security",
    "type": "Major",
    "name": "Cyber Security",
-   "rule": "8 courses",
+   "rule": "Complete 96 credit points",
    "members": [
+    "COSC2174",
     "COSC2539",
     "INTE2548",
-    "054381",
+    "INTE2585",
     "INTE2635",
     "INTE2637",
     "INTE2639",
+    "INTE2706",
     "INTE2641",
     "COSC3079"
    ],
@@ -647,29 +889,61 @@ window.DATA = {
    "need": 8
   },
   {
+   "id": "major:digital-innovation",
+   "type": "Major",
+   "name": "Digital Innovation",
+   "rule": "Complete 96 credit points",
+   "members": [
+    "BESC1525",
+    "BUSM3312",
+    "COSC2822",
+    "COSC2789",
+    "COSC2930",
+    "BUSM4092",
+    "INTE2585",
+    "COSC3163",
+    "COSC3165"
+   ],
+   "mandatory": [],
+   "need": 8
+  },
+  {
+   "id": "major:enterprise-systems-development",
+   "type": "Major",
+   "name": "Enterprise Systems Development",
+   "rule": "Complete 96 credit points",
+   "members": [
+    "COSC2440",
+    "COSC2469",
+    "COSC2769",
+    "ISYS2092",
+    "ISYS2099",
+    "COSC2450",
+    "COSC3062",
+    "COSC2101",
+    "COSC2790",
+    "ISYS3461",
+    "COSC3159",
+    "COSC3162",
+    "COSC3092",
+    "COSC2543"
+   ],
+   "mandatory": [],
+   "need": 8
+  },
+  {
    "id": "minor:ai-and-machine-learning",
    "type": "Minor",
-   "name": "AI and Machine Learning",
-   "rule": "4 courses",
+   "name": "AI & Machine Learning",
+   "rule": "Complete 48 credit points",
    "members": [
     "COSC2129",
     "COSC3066",
     "COSC2753",
-    "COSC3068"
-   ],
-   "mandatory": [],
-   "need": 4
-  },
-  {
-   "id": "minor:data-science",
-   "type": "Minor",
-   "name": "Data Science",
-   "rule": "4 courses",
-   "members": [
-    "COSC2789",
-    "COSC3081",
-    "MATH2459",
-    "COSC3077"
+    "COSC3068",
+    "ISYS3490",
+    "COSC3167",
+    "COSC3070"
    ],
    "mandatory": [],
    "need": 4
@@ -678,11 +952,12 @@ window.DATA = {
    "id": "minor:cloud-computing",
    "type": "Minor",
    "name": "Cloud Computing",
-   "rule": "Choose 4",
+   "rule": "Complete 48 credit points",
    "members": [
     "COSC2766",
     "COSC2822",
     "COSC2825",
+    "COSC2638",
     "COSC2930",
     "INTE2639"
    ],
@@ -690,33 +965,26 @@ window.DATA = {
    "need": 4
   },
   {
-   "id": "minor:enterprise-systems-development",
+   "id": "minor:creative-computing",
    "type": "Minor",
-   "name": "Enterprise Systems Development",
-   "rule": "Choose 4 (Further Programming mandatory)",
+   "name": "Creative Computing",
+   "rule": "Complete 48 credit points",
    "members": [
-    "COSC2440",
-    "COSC2469",
-    "COSC2769",
-    "COSC2101",
-    "ISYS2092",
-    "ISYS2099",
-    "COSC3062",
-    "COSC2790",
-    "COSC3092",
-    "COSC2543"
+    "COSC3072",
+    "COSC3169",
+    "COSC3074",
+    "COSC3066"
    ],
-   "mandatory": [
-    "COSC2440"
-   ],
+   "mandatory": [],
    "need": 4
   },
   {
    "id": "minor:cyber-assurance",
    "type": "Minor",
    "name": "Cyber Assurance",
-   "rule": "Choose 4",
+   "rule": "Complete 48 credit points",
    "members": [
+    "COSC2174",
     "COSC2539",
     "INTE2548",
     "INTE2635",
@@ -727,29 +995,17 @@ window.DATA = {
    "need": 4
   },
   {
-   "id": "minor:creative-computing",
+   "id": "minor:data-science",
    "type": "Minor",
-   "name": "Creative Computing",
-   "rule": "4 courses",
+   "name": "Data Science",
+   "rule": "Complete 48 credit points",
    "members": [
-    "COSC3072",
-    "044481",
-    "004201",
-    "COSC3066"
-   ],
-   "mandatory": [],
-   "need": 4
-  },
-  {
-   "id": "minor:entrepreneurship",
-   "type": "Minor",
-   "name": "Entrepreneurship",
-   "rule": "4 courses",
-   "members": [
-    "014202",
-    "014213",
-    "041605",
-    "041607"
+    "COSC2789",
+    "COSC3081",
+    "MATH2459",
+    "MATH2474",
+    "COSC3171",
+    "COSC3077"
    ],
    "mandatory": [],
    "need": 4
@@ -758,10 +1014,48 @@ window.DATA = {
    "id": "minor:digital-economy",
    "type": "Minor",
    "name": "Digital Economy",
-   "rule": "Not listed on the RMIT program page",
-   "members": [],
+   "rule": "Complete 48 credit points",
+   "members": [
+    "ECON1624",
+    "INTE2581",
+    "ECON1558",
+    "BAFI3250"
+   ],
    "mandatory": [],
-   "listMissing": true,
+   "need": 4
+  },
+  {
+   "id": "minor:enterprise-systems-development",
+   "type": "Minor",
+   "name": "Enterprise Systems Development",
+   "rule": "Complete 36 credit points",
+   "members": [
+    "COSC2769",
+    "ISYS2092",
+    "ISYS2099",
+    "COSC2450",
+    "COSC3062",
+    "COSC2101",
+    "COSC2790",
+    "COSC2469",
+    "COSC3092",
+    "COSC2543"
+   ],
+   "mandatory": [],
+   "need": 4
+  },
+  {
+   "id": "minor:entrepreneurship",
+   "type": "Minor",
+   "name": "Entrepreneurship",
+   "rule": "Complete 48 credit points",
+   "members": [
+    "BUSM3299",
+    "BUSM4092",
+    "BUSM4294",
+    "BUSM4186"
+   ],
+   "mandatory": [],
    "need": 4
   }
  ],
@@ -1055,6 +1349,101 @@ window.DATA = {
    "2026-1": "Yes",
    "2026-2": "Yes",
    "2026-3": "Yes"
+  },
+  "INTE2585": {
+   "2026-1": "Yes",
+   "2026-2": "",
+   "2026-3": "Yes"
+  },
+  "INTE2706": {
+   "2026-1": "",
+   "2026-2": "",
+   "2026-3": ""
+  },
+  "BUSM3312": {
+   "2026-1": "Yes",
+   "2026-2": "Yes",
+   "2026-3": ""
+  },
+  "BUSM4092": {
+   "2026-1": "Yes",
+   "2026-2": "",
+   "2026-3": ""
+  },
+  "COSC3165": {
+   "2026-1": "",
+   "2026-2": "",
+   "2026-3": ""
+  },
+  "COSC2450": {
+   "2026-1": "",
+   "2026-2": "",
+   "2026-3": ""
+  },
+  "ISYS3490": {
+   "2026-1": "",
+   "2026-2": "",
+   "2026-3": ""
+  },
+  "COSC3167": {
+   "2026-1": "",
+   "2026-2": "",
+   "2026-3": ""
+  },
+  "COSC3169": {
+   "2026-1": "",
+   "2026-2": "",
+   "2026-3": ""
+  },
+  "COSC3074": {
+   "2026-1": "",
+   "2026-2": "",
+   "2026-3": ""
+  },
+  "MATH2474": {
+   "2026-1": "",
+   "2026-2": "",
+   "2026-3": ""
+  },
+  "COSC3171": {
+   "2026-1": "",
+   "2026-2": "",
+   "2026-3": ""
+  },
+  "ECON1624": {
+   "2026-1": "Yes",
+   "2026-2": "Yes",
+   "2026-3": ""
+  },
+  "INTE2581": {
+   "2026-1": "",
+   "2026-2": "Yes",
+   "2026-3": "Yes"
+  },
+  "ECON1558": {
+   "2026-1": "",
+   "2026-2": "Yes",
+   "2026-3": "Yes"
+  },
+  "BAFI3250": {
+   "2026-1": "Yes",
+   "2026-2": "Yes",
+   "2026-3": "Yes"
+  },
+  "BUSM3299": {
+   "2026-1": "Yes",
+   "2026-2": "Yes",
+   "2026-3": "Yes"
+  },
+  "BUSM4294": {
+   "2026-1": "",
+   "2026-2": "",
+   "2026-3": "Yes"
+  },
+  "BUSM4186": {
+   "2026-1": "Yes",
+   "2026-2": "Yes",
+   "2026-3": ""
   }
  },
  "sequence": [
