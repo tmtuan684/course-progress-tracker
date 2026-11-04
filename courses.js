@@ -7,7 +7,7 @@ const OFFERING_CELL = {
   no: '<td class="off no">Not offered</td>',
   none: '<td class="off none" title="Not in the schedule">–</td>',
 };
-const offeringCell = (c, term) => OFFERING_CELL[Logic.offering(data, c.id, term)];
+const offeringCell = (c, term) => (c.uni ? '<td class="off none" title="Offered by other schools">varies</td>' : OFFERING_CELL[Logic.offering(data, c.id, term)]);
 
 // Prerequisite cell: codes in the handbook text are shown with the course name.
 function prereqCell(c) {

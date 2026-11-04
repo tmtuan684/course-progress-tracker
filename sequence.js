@@ -91,7 +91,7 @@ function resolveSlots() {
   // fill boxes left open (not cleared on purpose) with things the student already completed
   const placed = new Set(out.filter((o) => o.id).map((o) => o.id));
   const spare = data.courses.filter((c) => !c.required && state.done.includes(c.id) && !placed.has(c.id));
-  let uniLeft = state.uni;
+  let uniLeft = 0;                          // university electives are courses now (University elective 1-4), placed like any other
   out.forEach((o, i) => {
     if (o.kind !== 'open' || slots[i] === 'none') return;
     const next = spare.shift();
@@ -175,7 +175,7 @@ function renderPool(placedSem) {
     const g = filterGroup(f);
     return g ? c.groups.includes(g) : true;
   });
-  const showUni = f === 'all' && !q;
+  const showUni = false;                     // replaced by the University elective 1-4 courses
   visibleIds = (showUni ? ['UNI'] : []).concat(list.map((c) => c.id));
   [...picked].forEach((id) => { if (!visibleIds.includes(id)) picked.delete(id); });
   const uniRow = `<div class="pool-item ${picked.has('UNI') ? 'selected' : ''}" draggable="true" data-id="UNI">

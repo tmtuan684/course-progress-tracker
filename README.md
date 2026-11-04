@@ -16,6 +16,7 @@ Keep all files in one folder and double-click `index.html`. To share it with stu
 | `style.css` | Appearance: RMIT colours (red `#e60028`, navy `#000054`) in `:root`, plus a compact print layout for the one-page PDF. |
 | `ui.js` | Shared by every page: small page helpers, course chips and filters, and reading/saving the student's progress in the browser. |
 | `logic.js` | The degree rules as pure functions (no page code), so they can be tested in Node. |
+| `allcourses.html`, `allcourses.js` | All courses page: every course across the programs once, with the programs and roles that use it and its 2026 offering. |
 | `programs.html`, `programs.js` | The first page: the student chooses a program. Every other page redirects here until a program is chosen. |
 | `programs/*.js` | One data file per program (`bp162vi23.js`, `bp162opvi.js`, `bh120.js`, `bh120vri23.js`), each adding itself to `window.PROGRAMS`. |
 | `data/make_data.py` | Regenerates `programs/bp162vi23.js` from `Course_List.xlsx` and the handbook text. Not needed to run the site. |
@@ -153,3 +154,22 @@ New edition checklist: copy the previous edition's generator script, change the 
 Nothing is stored on a server. Progress is saved in the student's own browser (localStorage) after every change, and once more when the page is closed, with a "last saved" time.
 
 Every new browser session (a newly opened tab or window) starts on the program chooser, whatever any earlier visitor chose. If the browser holds saved progress, a "Welcome back" box lists it and asks the student to **Continue my progress** or **Start fresh** (which erases the saved progress in that browser after a confirmation). This keeps a shared lab computer from showing the previous student's data. Moving between pages in the same tab does not ask again. A browser that blocks storage simply starts fresh each time, so students there should use Export progress and Import.
+
+## Study path and course roles
+
+On My progress, the **Study path** card lets the student choose how they will finish the electives, and the completion check then tests that path only (without a choice, any valid path counts, as before):
+
+- BP162VI23: 1 major, 2 minors, 1 minor + 4 program options or university electives, or 4 program options + 4 university electives (the minors and major are chosen in the card).
+- BP162OPVI: the minor stream route (3 IT options + 4 stream courses + 2 general options) or the IT route (7 IT options + 2 general options); both also need 2 university electives.
+- BH120: 4 technical options + 2 university electives.
+- BH120VRI23: 4 courses from one minor, or 4 courses from any minors, + 2 university electives.
+
+Each completed elective plays one **role** in the chosen path (for example "counts as Minor: Cloud Computing" or "Program option"). The app assigns roles automatically by finding the placement that fills the most places, so a course listed in several groups goes where it is needed. In the course list, a completed elective gets a dropdown where the student can set its role ("Counts as ...") or choose "Do not count". Courses that could not be placed are listed as completed but not counted. Choosing a different path or group resets the roles to automatic. The path, groups and role choices are saved with the progress and exported with it (`path`, `pathGroups`, `roles`). The paths are defined in `pathDefs` in `logic.js`.
+
+## University electives
+
+University electives are courses from other schools, and the list changes, so each program has four placeholder courses, **University elective 1 to 4** (codes `UELEC1` to `UELEC4`, 12 credit points each). The student ticks one for each university elective taken; the number of ticked placeholders is the count the progress check, credit points and study paths use. The old typed number was removed; an older saved number is converted into ticked placeholders. They can also be placed in the sequence boxes like any other course. They have no offering data ("offered by other schools"). They are added by `data/add_uni_electives.py`, which edits every `programs/*.js` file and can be run again safely; run it after the `make_*.py` scripts. Four is enough for every current path (the most any needs is four).
+
+### Choosing a role for each course
+
+Every completed elective has a role dropdown in the course list on My progress, whether or not a study path is chosen. With no path chosen, it lists every role the course can play in the program (each major or minor that lists it, "Program option" or "Minor course (any minor)", and the IT, general or technical option lists) plus "Do not count". The app then finds the path and groups that fit the courses and role choices best and shows it as "Best fit so far" at the top of the Study path card; once any role is set, the elective check follows that best fit, so "Do not count" takes the course out of the check. Choosing a path yourself restricts the dropdown to that path's roles.

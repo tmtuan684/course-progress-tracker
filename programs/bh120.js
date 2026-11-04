@@ -634,6 +634,62 @@ window.PROGRAMS["BH120"] = {
    ],
    "prereq": null,
    "codeTbc": true
+  },
+  {
+   "id": "UELEC1",
+   "hn": null,
+   "name": "University elective 1",
+   "credits": 12,
+   "required": false,
+   "category": null,
+   "groups": [],
+   "lists": [
+    "uni"
+   ],
+   "uni": true,
+   "prereq": null
+  },
+  {
+   "id": "UELEC2",
+   "hn": null,
+   "name": "University elective 2",
+   "credits": 12,
+   "required": false,
+   "category": null,
+   "groups": [],
+   "lists": [
+    "uni"
+   ],
+   "uni": true,
+   "prereq": null
+  },
+  {
+   "id": "UELEC3",
+   "hn": null,
+   "name": "University elective 3",
+   "credits": 12,
+   "required": false,
+   "category": null,
+   "groups": [],
+   "lists": [
+    "uni"
+   ],
+   "uni": true,
+   "prereq": null
+  },
+  {
+   "id": "UELEC4",
+   "hn": null,
+   "name": "University elective 4",
+   "credits": 12,
+   "required": false,
+   "category": null,
+   "groups": [],
+   "lists": [
+    "uni"
+   ],
+   "uni": true,
+   "prereq": null
   }
  ],
  "groups": [],

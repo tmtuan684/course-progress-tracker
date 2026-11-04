@@ -61,7 +61,7 @@ function copyProgress(fromCode, toCode) {
   let cur = null;
   try { cur = JSON.parse(localStorage.getItem(storageKey(to))); } catch (e) { cur = null; }
   const merged = { ...(cur || {}), done: [...new Set([...((cur && cur.done) || []), ...gain])],
-    uni: Math.min(Math.max(Number(src.uni) || 0, Number(cur && cur.uni) || 0), to.maxUni || 8),
+    uni: 0,                                        // recomputed from the ticked University elective courses
     name: (cur && cur.name) || src.name || '' };
   const msg = `Copy ${gain.size} course(s) from ${fromCode} to ${toCode}?` +
     (lost.length ? `\n\nNo matching course in ${toCode} for:\n` + lost.map((id) => `${id} ${nameOf(id)}`).join('\n') : '');

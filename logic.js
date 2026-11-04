@@ -28,10 +28,17 @@ const Logic = (() => {
     return out;
   }
 
+  // University electives completed = ticked University elective placeholder courses (older data: the typed number).
+  function uniCount(data, state, done) {
+    const placeholders = data.courses.filter((c) => c.uni);
+    if (!placeholders.length) return Number(state.uni) || 0;
+    return placeholders.filter((c) => done.has(c.id)).length;
+  }
+
   // A course used as a REQUIRED course cannot also fill an elective slot, so only
   // non-required completed courses count towards majors/minors/program options.
   function electiveDone(data, done) {
-    return new Set(data.courses.filter((c) => !c.required && done.has(c.id)).map((c) => c.id));
+    return new Set(data.courses.filter((c) => !c.required && !c.uni && done.has(c.id)).map((c) => c.id));
   }
 
   function groupStatus(g, elective, done) {
@@ -81,7 +88,7 @@ const Logic = (() => {
     const listSet = (name) => new Set(data.courses.filter((c) => !c.required && (c.lists || []).includes(name)).map((c) => c.id));
     const IT = listSet('it'), GEN = listSet('general');
     const statuses = data.groups.map((g) => groupStatus(g, elective, done));
-    const U = Number(state.uni) || 0;
+    const U = uniCount(data, state, done);
     const uniNeed = Math.max(0, 2 - U);
     const fill = (parts) => parts.flatMap(([set, n]) => Array(n).fill(set));
     const total = (slots) => slots.length;
@@ -116,7 +123,7 @@ const Logic = (() => {
     const elective = electiveDone(data, done);
     const statuses = data.groups.map((g) => groupStatus(g, elective, done));
     const name = data.optionName || 'technical options';
-    const U = Number(state.uni) || 0;
+    const U = uniCount(data, state, done);
     const techLeft = Math.max(0, 4 - tech.length), uniLeft = Math.max(0, 2 - U);
     const required = data.courses.filter((c) => c.required);
     const requiredDone = required.filter((c) => done.has(c.id));
@@ -129,7 +136,7 @@ const Logic = (() => {
       required: { done: requiredDone.length, total: required.length }, credits };
   }
 
-  function evaluate(data, state) {
+  function evaluateAny(data, state) {
     if (data.ruleset === 'techoptions') return evaluateTech(data, state);
     if (data.ruleset === 'streams') return evaluateStreams(data, state);
     const courses = byId(data);
@@ -142,7 +149,7 @@ const Logic = (() => {
     // program options = completed electives listed by at least one group (each course counted once)
     const options = [...elective].filter((id) => courses[id].groups.length > 0).map((id) => courses[id]);
     const D = options.length;
-    const U = Number(state.uni) || 0;
+    const U = uniCount(data, state, done);
 
     let pairOK = false;
     for (let i = 0; i < minors.length; i++)
@@ -172,6 +179,133 @@ const Logic = (() => {
       required: { done: requiredDone.length, total: required.length },
       credits,
     };
+  }
+
+
+  // ---------- study paths ----------
+  // A path is one way to finish the electives. The student picks one; every completed elective course then plays
+  // one role in it (counts towards a major, a minor, program options ...), chosen automatically and changeable.
+  const ROLE_NAMES = { it: 'IT / Advanced IT option', general: 'General option', tech: 'Technical option' };
+  function pathDefs(data) {
+    const g = (id) => data.groups.find((x) => x.id === id);
+    const need = (id) => (g(id) ? g(id).need : 4);
+    if (data.ruleset === 'electives8') return [
+      { id: 'major', label: '1 major (8 courses)', picks: [{ type: 'Major', label: 'Major' }], uni: 0,
+        slots: (s) => [{ role: s[0], n: need(s[0]) }] },
+      { id: 'minors2', label: '2 minors (4 + 4 courses)', picks: [{ type: 'Minor', label: 'Minor 1' }, { type: 'Minor', label: 'Minor 2' }], uni: 0,
+        slots: (s) => s.map((id) => ({ role: id, n: need(id) })) },
+      { id: 'minor-options', label: '1 minor + 4 program options or university electives', picks: [{ type: 'Minor', label: 'Minor' }], uni: 0,
+        slots: (s) => [{ role: s[0], n: need(s[0]) }, { role: 'option', n: 4, uniFill: true }] },
+      { id: 'options-uni', label: '4 program options + 4 university electives', picks: [], uni: 4, slots: () => [{ role: 'option', n: 4 }] },
+    ];
+    if (data.ruleset === 'streams') return [
+      { id: 'stream', label: 'Minor stream route: 3 IT options + 4 stream courses + 2 general options', picks: [{ type: 'Minor', label: 'Minor stream' }], uni: 2,
+        slots: (s) => [{ role: 'it', n: 3 }, { role: s[0], n: need(s[0]) }, { role: 'general', n: 2 }] },
+      { id: 'it-route', label: 'IT route: 7 IT / Advanced IT options + 2 general options', picks: [], uni: 2,
+        slots: () => [{ role: 'it', n: 7 }, { role: 'general', n: 2 }] },
+    ];
+    if (data.groups.length) return [
+      { id: 'one-minor', label: '4 courses from one minor', picks: [{ type: 'Minor', label: 'Minor' }], uni: 2,
+        slots: (s) => [{ role: s[0], n: need(s[0]) }] },
+      { id: 'any-minors', label: '4 courses from any minors', picks: [], uni: 2, slots: () => [{ role: 'option', n: 4 }] },
+    ];
+    return [{ id: 'tech', label: '4 technical options', picks: [], uni: 2, slots: () => [{ role: 'tech', n: 4 }] }];
+  }
+  function roleLabel(data, role) {
+    const g = data.groups.find((x) => x.id === role);
+    if (g) return `${g.type}: ${g.name}`;
+    if (role === 'option') return data.ruleset === 'electives8' ? 'Program option' : 'Minor course (any minor)';
+    return ROLE_NAMES[role] || role;
+  }
+  // Courses that may play a role.
+  function eligible(data, role) {
+    const g = data.groups.find((x) => x.id === role);
+    if (g) return new Set(g.members.filter((id) => byId(data)[id] && !byId(data)[id].required));
+    return new Set(data.courses.filter((c) => !c.required && (role === 'option' ? c.groups.length > 0 : (c.lists || []).includes(role))).map((c) => c.id));
+  }
+  function validRoles(data) {
+    return new Set(['none', 'option', 'it', 'general', 'tech', ...data.groups.map((g) => g.id)]);
+  }
+
+  // Place completed elective courses into the path's places (largest matching), honouring the student's own role choices.
+  function evaluatePath(data, state, done) {
+    const def = pathDefs(data).find((p) => p.id === state.path);
+    if (!def) return null;
+    const sel = (state.pathGroups || []).filter((id, i) => data.groups.some((x) => x.id === id && x.type === (def.picks[i] || {}).type));
+    if (sel.length < def.picks.length || new Set(sel).size < sel.length) return { def, incomplete: true, sel, met: false };
+    const groups = def.slots(sel);
+    const slots = groups.flatMap((gr) => Array.from({ length: gr.n }, () => ({ role: gr.role, ok: eligible(data, gr.role) })));
+    const elective = [...electiveDone(data, done)];
+    const ov = state.roles || {};
+    const allowed = (id, i) => ov[id] !== 'none' && (!ov[id] || ov[id] === slots[i].role) && slots[i].ok.has(id);
+    const owner = Array(slots.length).fill(null);
+    const tryFill = (i, seen) => {
+      for (const id of elective) {
+        if (!allowed(id, i) || seen.has(id)) continue;
+        seen.add(id);
+        const j = owner.indexOf(id);
+        if (j < 0 || tryFill(j, seen)) { owner[i] = id; return true; }
+      }
+      return false;
+    };
+    slots.forEach((_, i) => tryFill(i, new Set()));
+    const U = uniCount(data, state, done);
+    const assigned = {};
+    owner.forEach((id, i) => { if (id) assigned[id] = slots[i].role; });
+    let uniLeft = U;
+    const roles = groups.map((gr) => {
+      const have = Object.values(assigned).filter((r) => r === gr.role).length;
+      const used = gr.uniFill ? Math.min(Math.max(0, gr.n - Math.min(have, gr.n)), uniLeft) : 0;
+      uniLeft -= used;
+      return { role: gr.role, label: roleLabel(data, gr.role), need: gr.n, have: Math.min(have, gr.n), uni: used,
+        courses: owner.filter((id, i) => id && slots[i].role === gr.role) };
+    });
+    const uniNeed = def.uni, uniOK = uniLeft >= uniNeed;
+    const left = roles.reduce((n, r) => n + r.need - r.have - r.uni, 0) + Math.max(0, uniNeed - uniLeft);
+    return { def, sel, roles, assigned, extra: elective.filter((id) => !assigned[id]), uni: { need: uniNeed, have: uniLeft },
+      met: left === 0 && uniOK, left };
+  }
+
+  // Roles a course could play anywhere in this program (for the role dropdown when no path is chosen yet).
+  function rolesFor(data, c) {
+    const out = c.groups.map((id) => ({ role: id, label: roleLabel(data, id) }));
+    if (c.groups.length && data.ruleset !== 'streams') out.push({ role: 'option', label: roleLabel(data, 'option') });   // streams programs have no free 'option' role
+    (c.lists || []).filter((l) => l !== 'uni').forEach((l) => out.push({ role: l, label: roleLabel(data, l) }));
+    return out;
+  }
+
+  // No path chosen: find the path (and groups) that the completed courses and the student's role choices fit best.
+  function bestPath(data, state, done) {
+    let best = null;
+    for (const def of pathDefs(data)) {
+      const combos = def.picks.reduce((acc, pk) => acc.flatMap((c) =>
+        data.groups.filter((g) => g.type === pk.type && !c.includes(g.id)).map((g) => [...c, g.id])), [[]]);
+      for (const combo of combos) {
+        const r = evaluatePath(data, { ...state, path: def.id, pathGroups: combo }, done);
+        if (r && !r.incomplete && (!best || r.left < best.left)) best = r;
+      }
+    }
+    return best;
+  }
+
+  // Check the elective requirement. With a study path chosen, only that path counts; otherwise any path may satisfy it.
+  function evaluate(data, state) {
+    const ev = evaluateAny(data, state);
+    const res = evaluatePath(data, state, expandDone(data, state.done));
+    ev.path = res;
+    if (!state.path) {                              // no path chosen: show the best fit; role choices then decide the result
+      ev.autoPath = bestPath(data, state, expandDone(data, state.done));
+      if (ev.autoPath && Object.keys(state.roles || {}).length) {
+        const a = ev.autoPath;
+        ev.pathways = [{ id: a.def.id, label: a.def.label + (a.left ? ` (${a.left} more needed)` : ''), met: a.met }];
+        ev.electivesMet = a.met;
+      }
+    }
+    if (res && !res.incomplete) {
+      ev.pathways = [{ id: res.def.id, label: res.def.label + (res.left ? ` (${res.left} more needed)` : ''), met: res.met }];
+      ev.electivesMet = res.met;
+    }
+    return ev;
   }
 
   // Is this course running at SGS in this term?
@@ -205,7 +339,7 @@ const Logic = (() => {
     return Math.floor(i / CONFIG.termsPerYear) + '-' + ((i % CONFIG.termsPerYear) + 1);
   }
 
-  return { evaluate, expandDone, planCheck, offering, offeredIn, byId, isTerm, termFor };
+  return { evaluate, evaluatePath, bestPath, rolesFor, pathDefs, roleLabel, eligible, validRoles, expandDone, planCheck, offering, offeredIn, byId, isTerm, termFor };
 })();
 
 if (typeof module !== 'undefined') module.exports = { Logic, CONFIG }; // lets Node tests import it

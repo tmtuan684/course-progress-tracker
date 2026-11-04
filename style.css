@@ -269,3 +269,9 @@ main.wide { display: block; }
 #welcome ul { padding-left: 1.1rem; }
 .welcome-actions { display: flex; gap: .6rem; flex-wrap: wrap; margin-top: 1rem; }
 .welcome-actions button { font: inherit; padding: .5rem .9rem; border-radius: 4px; cursor: pointer; }
+
+/* study path card: selects fit the narrow progress pane */
+#progress .card label { display: block; }
+#progress .card label.uni { display: flex; }
+#progress .card select { display: block; width: 100%; max-width: 100%; box-sizing: border-box; margin: .25rem 0 .6rem; }
+.roleSel { max-width: 15rem; }

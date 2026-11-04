@@ -37,7 +37,7 @@ const groupLabel = (g) => `${g.type}: ${g.name}`;
 const optionsHtml = (pairs) => pairs.map(([v, l]) => `<option value="${esc(v)}">${esc(l)}</option>`).join('');
 
 // ---------- course chips and filters ----------
-const LIST_NAMES = { it: 'IT / Advanced IT option', general: 'General option', tech: 'Technical option' };
+const LIST_NAMES = { it: 'IT / Advanced IT option', general: 'General option', tech: 'Technical option', uni: 'University elective' };
 const groupChips = (c, sep = '') => [
   ...c.groups.map((id) => `<span class="chip ${groupById[id].type.toLowerCase()}">${esc(groupLabel(groupById[id]))}</span>`),
   ...(c.lists || []).map((l) => `<span class="chip option">${esc(LIST_NAMES[l] || l)}</span>`)].join(sep);
@@ -53,15 +53,27 @@ const textMatch = (c, q) => !q || (c.id + ' ' + c.name).toLowerCase().includes(q
 const STORAGE_KEY = data.code === 'BP162VI23' ? 'course-planner.v1' : 'course-planner.v1.' + data.code;   // one entry per program
 const FOLD_KEY = 'course-planner.pool-folded';         // course picker folded on the sequence page
 const clampUni = (v) => Math.max(0, Math.min(data.maxUni || CONFIG.maxUni, Math.floor(Number(v) || 0)));
-const emptyState = () => ({ done: [], uni: 0, plan: {}, name: '', start: '', breaks: [], major: '', minors: [],
+const emptyState = () => ({ done: [], uni: 0, plan: {}, name: '', start: '', breaks: [], major: '', minors: [], path: '', pathGroups: [], roles: {},
   slots: Array(SLOT_COUNT).fill('') });
+
+// University electives are placeholder courses (University elective 1..4); the count the rules use is how many are ticked.
+function syncUni(s) { s.uni = data.courses.filter((c) => c.uni && s.done.includes(c.id)).length; return s; }
 
 // Never trust saved/imported data: keep only known course ids and sensible values.
 function clean(s) {
   const out = emptyState();
   if (Array.isArray(s.done)) out.done = [...new Set(s.done.filter((id) => courseById[id]))];
   out.uni = clampUni(s.uni);
+  const placeholders = data.courses.filter((c) => c.uni).map((c) => c.id);   // older saves kept a typed number: tick that many
+  for (const id of placeholders) { if (out.uni > data.courses.filter((c) => c.uni && out.done.includes(c.id)).length && !out.done.includes(id)) out.done.push(id); }
   out.name = String(s.name || '').slice(0, 80);
+  // study path chosen on My progress, the groups it uses, and the student's own role for a course
+  if (Logic.pathDefs(data).some((p) => p.id === s.path)) out.path = s.path;
+  if (Array.isArray(s.pathGroups)) out.pathGroups = s.pathGroups.filter((id) => groupById[id]).slice(0, 2);
+  if (s.roles && typeof s.roles === 'object') {
+    const ok = Logic.validRoles(data);
+    for (const [id, r] of Object.entries(s.roles)) if (courseById[id] && ok.has(r)) out.roles[id] = r;
+  }
   out.start = Logic.isTerm(s.start) ? s.start : '';
   out.major = groupById[s.major] && groupById[s.major].type === 'Major' ? s.major : '';
   if (Array.isArray(s.minors)) out.minors = s.minors.filter((id) => groupById[id] && groupById[id].type === 'Minor').slice(0, 2);
@@ -74,7 +86,7 @@ function clean(s) {
   if (s.plan && typeof s.plan === 'object')
     for (const [id, term] of Object.entries(s.plan))
       if (courseById[id] && CONFIG.planTerms.includes(term)) out.plan[id] = term;
-  return out;
+  return syncUni(out);
 }
 function loadState() {
   try {

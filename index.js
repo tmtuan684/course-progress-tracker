@@ -3,12 +3,40 @@
 
 const nextTerm = CONFIG.planTerms[0];
 let state = loadState();
-const save = () => saveState(state);
+const save = () => saveState(syncUni(state));
 
 // ---------- progress panel ----------
 function bar(n, total, cls = '') {
   const pct = total ? Math.min(100, Math.round((n / total) * 100)) : 0;
   return `<div class="bar ${cls}"><div style="width:${pct}%"></div></div>`;
+}
+
+// Study path card: which way of finishing the electives the student follows, and how completed courses are used in it.
+function pathCard(ev) {
+  const defs = Logic.pathDefs(data);
+  const def = defs.find((p) => p.id === state.path);
+  const picks = def ? def.picks.map((pk, i) => {
+    const opts = data.groups.filter((g) => g.type === pk.type)
+      .map((g) => `<option value="${esc(g.id)}" ${state.pathGroups[i] === g.id ? 'selected' : ''}>${esc(g.name)}</option>`).join('');
+    return `<label>${esc(pk.label)} <select class="pathgroup" data-i="${i}"><option value="">Choose…</option>${opts}</select></label>`;
+  }).join('') : '';
+  const p = ev.path;
+  let detail = '';
+  if (p && p.incomplete) detail = `<p class="hint">Choose ${def.picks.length > 1 ? 'both' : 'the'} ${def.picks.map((x) => x.type.toLowerCase()).join(' and ')} to check this path.</p>`;
+  else if (p) {
+    detail = `<ul class="groups">${p.roles.map((r) => `<li class="group ${r.have + r.uni >= r.need ? 'done' : ''}">
+        <div class="row"><span>${esc(r.label)}</span><strong>${r.have}${r.uni ? ' + ' + r.uni + ' university' : ''} / ${r.need}</strong></div>${bar(r.have + r.uni, r.need)}
+        ${r.courses.length ? `<small>${r.courses.map((id) => esc(id)).join(', ')}</small>` : ''}</li>`).join('')}
+      ${p.uni.need ? `<li class="group ${p.uni.have >= p.uni.need ? 'done' : ''}"><div class="row"><span>University electives</span><strong>${Math.min(p.uni.have, p.uni.need)} / ${p.uni.need}</strong></div>${bar(p.uni.have, p.uni.need)}</li>` : ''}</ul>
+      <p class="result">${p.met ? 'This path is complete' : `This path needs ${p.left} more course(s)`}</p>
+      ${p.extra.length ? `<p class="hint">Completed but not counted in this path: ${p.extra.map((id) => esc(id)).join(', ')}. Change a course's role in the list below if one should count.</p>` : ''}`;
+  }
+  return `<div class="card ${p && p.met ? 'done' : ''}">
+    <h2>Study path</h2>
+    ${!state.path && ev.autoPath ? `<p class="hint">Best fit so far: <strong>${esc(ev.autoPath.def.label)}</strong>${ev.autoPath.sel.length ? ' (' + ev.autoPath.sel.map((id) => esc(groupById[id].name)).join(', ') + ')' : ''}${ev.autoPath.left ? `, ${ev.autoPath.left} more course(s) needed` : ', complete'}. Set a course's role in the list below, or choose a path here.</p>` : ''}
+    <label>Path <select id="path"><option value="">Not chosen (any path counts)</option>${defs.map((d) =>
+      `<option value="${esc(d.id)}" ${d.id === state.path ? 'selected' : ''}>${esc(d.label)}</option>`).join('')}</select></label>
+    ${picks}${detail}</div>`;
 }
 
 function renderProgress() {
@@ -31,13 +59,14 @@ function renderProgress() {
       ${bar(ev.required.done, ev.required.total, 'required')}
     </div>
 
+    ${pathCard(ev)}
+
     <div class="card ${ev.electivesMet ? 'done' : ''}">
       <h2>${esc(data.labels.electives)}</h2>
       <ul class="pathways">${ev.pathways.map((p) =>
         `<li class="${p.met ? 'met' : ''}"><span>${p.met ? '✓' : '○'}</span> ${esc(p.label)}</li>`).join('')}</ul>
       <p class="result">${ev.electivesMet ? 'Elective requirement met' : 'Elective requirement not met yet'}</p>
-      <label class="uni">${esc(data.labels.uni)}
-        <input id="uni" type="number" min="0" max="${data.maxUni || CONFIG.maxUni}" value="${state.uni}"></label>
+      <p class="hint"><strong>${esc(data.labels.uni)}: ${state.uni}</strong>. Tick University elective 1 to 4 in the course list below, one for each elective course taken in another school.</p>
       <p class="hint">${esc(data.labels.options)}: <strong>${ev.D}</strong></p>
       <ul class="groups">${groupRows}</ul>
     </div>`;
@@ -68,12 +97,29 @@ function matches(c, filter, q) {
 }
 
 function offeredBadge(c) {
+  if (c.uni) return '<span class="chip muted">offered by other schools</span>';
   if (!data.offerings[c.id]) return '<span class="chip muted">no schedule data</span>';
   return Logic.offeredIn(data, c.id, nextTerm)
     ? `<span class="chip ok">offered ${nextTerm}</span>` : `<span class="chip muted">not ${nextTerm}</span>`;
 }
 
+// Role of a completed elective in the chosen path: automatic, or the student's own choice.
+function roleSelect(c, evp) {
+  const auto = evp.assigned[c.id];
+  const own = state.roles[c.id] || '';
+  const opts = state.path
+    ? evp.roles.filter((r, i, a) => a.findIndex((x) => x.role === r.role) === i && Logic.eligible(data, r.role).has(c.id))
+    : Logic.rolesFor(data, c);                    // no path chosen yet: every role this course can play in the program
+  return `<select class="roleSel" aria-label="Role of ${esc(c.name)}">
+    <option value="">Auto: ${esc(auto ? Logic.roleLabel(data, auto) : 'not counted')}</option>
+    ${opts.map((r) => `<option value="${esc(r.role)}" ${own === r.role ? 'selected' : ''}>Counts as ${esc(r.label)}</option>`).join('')}
+    <option value="none" ${own === 'none' ? 'selected' : ''}>Do not count</option></select>`;
+}
+
 function renderList() {
+  const evAll = Logic.evaluate(data, state);
+  const evp = evAll.path || evAll.autoPath;     // the chosen path, or the best fit when none is chosen
+  const pathOn = evp && !evp.incomplete;
   const filter = $('#filter').value || 'all';
   const q = $('#search').value.trim().toLowerCase();
   const rows = data.courses.filter((c) => matches(c, filter, q)).map((c) => {
@@ -88,10 +134,10 @@ function renderList() {
         <div class="chips">${chips}${offeredBadge(c)}</div>
       </div>
       <div class="plan">
-        <select class="planSel" aria-label="Plan for: ${esc(c.name)}" ${done ? 'disabled' : ''}>
+        ${done && pathOn && !c.required ? roleSelect(c, evp) : `<select class="planSel" aria-label="Plan for: ${esc(c.name)}" ${done ? 'disabled' : ''}>
           <option value="">Plan for…</option>
           ${CONFIG.planTerms.map((t) => `<option ${t === term ? 'selected' : ''}>${t}</option>`).join('')}
-        </select>
+        </select>`}
         <small class="check ${check === 'OK' ? 'ok' : check ? 'bad' : ''}">${esc(check)}</small>
       </div>
     </div>`;
@@ -159,6 +205,8 @@ $('#list').addEventListener('change', (e) => {
   if (e.target.classList.contains('tick')) {
     state.done = e.target.checked ? [...new Set([...state.done, id])] : state.done.filter((x) => x !== id);
     if (e.target.checked) delete state.plan[id];          // finished courses need no plan
+  } else if (e.target.classList.contains('roleSel')) {
+    if (e.target.value) state.roles[id] = e.target.value; else delete state.roles[id];
   } else if (e.target.classList.contains('planSel')) {
     if (e.target.value) state.plan[id] = e.target.value; else delete state.plan[id];
   }
@@ -166,6 +214,15 @@ $('#list').addEventListener('change', (e) => {
 });
 
 $('#progress').addEventListener('change', (e) => {
+  if (e.target.id === 'path') {                          // a new path starts with automatic roles
+    state.path = e.target.value; state.pathGroups = []; state.roles = {};
+    save(); renderAll(); return;
+  }
+  if (e.target.classList.contains('pathgroup')) {
+    state.pathGroups = [...document.querySelectorAll('.pathgroup')].map((sel) => sel.value);
+    state.roles = {};
+    save(); renderAll(); return;
+  }
   if (e.target.id !== 'uni') return;
   state.uni = clampUni(e.target.value);
   save(); renderAll();
