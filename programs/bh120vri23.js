@@ -723,6 +723,19 @@ window.PROGRAMS["BH120VRI23"] = {
    "prereq": null
   },
   {
+   "id": "COSC2440",
+   "hn": null,
+   "name": "Further Programming",
+   "credits": 12,
+   "required": false,
+   "category": null,
+   "groups": [
+    "minor:enterprise-systems-development"
+   ],
+   "lists": [],
+   "prereq": null
+  },
+  {
    "id": "ISYS2099",
    "hn": null,
    "name": "Database Applications",
@@ -1009,6 +1022,7 @@ window.PROGRAMS["BH120VRI23"] = {
    "name": "Enterprise Systems Development",
    "rule": "Complete 36 credit points",
    "members": [
+    "COSC2440",
     "ISYS2099",
     "COSC2450",
     "COSC3062",
@@ -1308,6 +1322,11 @@ window.PROGRAMS["BH120VRI23"] = {
   "BAFI3250": {
    "2026-1": "Yes",
    "2026-2": "Yes",
+   "2026-3": "Yes"
+  },
+  "COSC2440": {
+   "2026-1": "Yes",
+   "2026-2": "",
    "2026-3": "Yes"
   },
   "ISYS2099": {

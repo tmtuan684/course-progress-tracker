@@ -406,7 +406,8 @@ window.PROGRAMS["BP162VI23"] = {
    "required": false,
    "category": "Major",
    "groups": [
-    "major:enterprise-systems-development"
+    "major:enterprise-systems-development",
+    "minor:enterprise-systems-development"
    ],
    "prereq": null
   },
@@ -1089,6 +1090,7 @@ window.PROGRAMS["BP162VI23"] = {
    "name": "Enterprise Systems Development",
    "rule": "Complete 36 credit points",
    "members": [
+    "COSC2440",
     "COSC2769",
     "ISYS2092",
     "ISYS2099",
