@@ -275,3 +275,14 @@ main.wide { display: block; }
 #progress .card label.uni { display: flex; }
 #progress .card select { display: block; width: 100%; max-width: 100%; box-sizing: border-box; margin: .25rem 0 .6rem; }
 .roleSel { max-width: 15rem; }
+
+/* welcome dialog buttons: the global button style is white-on-translucent for the dark header */
+#welcome .welcome-actions button { border: 1px solid transparent; }
+#welcome #welcome-continue { background: var(--red, #e60028); color: #fff; }
+#welcome #welcome-continue:hover { filter: brightness(.92); }
+#welcome #welcome-fresh { background: #fff; color: var(--red, #e60028); border-color: var(--red, #e60028); }
+#welcome #welcome-fresh:hover { background: #fdecef; }
+
+/* program card: "Copy courses" button and select readable on the white card */
+.program .copy-btn { background: var(--navy, #000054); color: #fff; border: 1px solid transparent; }
+.program .copy-btn:hover { filter: brightness(1.2); }
