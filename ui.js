@@ -24,7 +24,7 @@ const groupLabel = (g) => `${g.type}: ${g.name}`;
 const optionsHtml = (pairs) => pairs.map(([v, l]) => `<option value="${esc(v)}">${esc(l)}</option>`).join('');
 
 // ---------- course chips and filters ----------
-const LIST_NAMES = { it: 'IT / Advanced IT option', general: 'General option' };
+const LIST_NAMES = { it: 'IT / Advanced IT option', general: 'General option', tech: 'Technical option' };
 const groupChips = (c, sep = '') => [
   ...c.groups.map((id) => `<span class="chip ${groupById[id].type.toLowerCase()}">${esc(groupLabel(groupById[id]))}</span>`),
   ...(c.lists || []).map((l) => `<span class="chip option">${esc(LIST_NAMES[l] || l)}</span>`)].join(sep);

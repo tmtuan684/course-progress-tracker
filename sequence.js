@@ -6,7 +6,8 @@ if (!Array.isArray(data.sequence)) {
   throw new Error('data.js has no sequence');
 }
 const SLOTS = SLOT_COUNT;
-const STREAMS = data.ruleset === 'streams';
+const STREAMS = data.ruleset === 'streams' || (data.ruleset === 'techoptions' && data.groups.length > 0);   // one group choice only
+const NOGROUPS = !data.groups.length;                 // programs with no major or minor to choose
 // label and stream flag for each open box, in order (programs without labels get plain boxes)
 const slotMeta = data.sequence.flatMap((sem) => Array.from({ length: sem.open }, (_, k) => (sem.slots && sem.slots[k]) || {}));
 const streamRank = {};                      // box index -> position among the boxes a stream/major fills
@@ -130,7 +131,7 @@ function render() {
   lastResolved = res.slots;
   let slotIdx = 0;
   const placedSem = {};
-  $('#sequence').innerHTML = [1, 2, 3].map((y) => {
+  $('#sequence').innerHTML = [...new Set(data.sequence.map((x) => x.year))].map((y) => {
     const sems = data.sequence.filter((s) => s.year === y).map((s) => {
       const term = Logic.termFor(start, s.sem, breaks);
       const hasBreak = breaks.includes(s.sem);
@@ -159,7 +160,7 @@ function render() {
 }
 
 // ---------- course picker ----------
-const poolFilterOptions = () => optionsHtml([['all', 'All elective courses'], ['chosen', STREAMS ? 'My minor stream' : 'My major / minors'],
+const poolFilterOptions = () => optionsHtml([['all', 'All elective courses'], ...(NOGROUPS ? [] : [['chosen', STREAMS ? 'My minor stream' : 'My major / minors']]),
   ...groupFilterPairs(), ...listFilterPairs()]);
 
 function renderPool(placedSem) {
@@ -222,10 +223,11 @@ const place = (id, idx) => placeMany([id], idx);
 const groupOpts = (type, current, none) => `<option value="">${none}</option>` +
   data.groups.filter((g) => g.type === type).map((g) => `<option value="${esc(g.id)}" ${g.id === current ? 'selected' : ''}>${esc(g.name)}</option>`).join('');
 function drawChoices() {
+  if (NOGROUPS) { ['#major', '#minor1', '#minor2'].forEach((id) => { $(id).closest('label').style.display = 'none'; }); return; }
   if (STREAMS) {                                                  // one choice only: the minor stream
     $('#major').closest('label').style.display = $('#minor2').closest('label').style.display = 'none';
-    $('#minor1').closest('label').firstChild.textContent = 'Minor stream ';
-    $('#minor1').innerHTML = groupOpts('Minor', minors[0], 'No stream (IT route)');
+    $('#minor1').closest('label').firstChild.textContent = (data.labels.group || 'Minor stream') + ' ';
+    $('#minor1').innerHTML = groupOpts('Minor', minors[0], data.labels.noGroup || 'No stream (IT route)');
     return;
   }
   $('#major').innerHTML = groupOpts('Major', major, 'No major');
@@ -243,6 +245,9 @@ function choose() {
 }
 
 $('#program').textContent = data.program;
+$('.legend').innerHTML = `<span class="sw core"></span>${esc(data.labels.core)} ` +
+  (NOGROUPS ? '' : (STREAMS ? '' : '<span class="sw major"></span>Major course ') + '<span class="sw minor"></span>' + (STREAMS ? 'Stream course ' : 'Minor course ')) +
+  '<span class="sw slot"></span>Open slot <span class="sw done"></span>Completed';
 if (data.sequenceNote) $('#seq-note').textContent = data.sequenceNote;
 $('#start').innerHTML = startOptions().map((t) => `<option ${t === start ? 'selected' : ''}>${esc(t)}</option>`).join('');
 $('#pool-filter').innerHTML = poolFilterOptions();

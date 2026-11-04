@@ -1,4 +1,4 @@
-# Course Planner (RMIT Bachelor of IT, Saigon South: BP162VI23 and BP162OPVI)
+# Course Planner (RMIT Saigon South: BP162VI23, BP162OPVI, BH120 and BH120VRI23)
 
 A small web app where a student ticks completed courses, sees progress toward the degree, and plans courses for upcoming semesters. It is plain HTML, CSS and JavaScript with no framework, no build step and no server. It does the same job as `Course_List.xlsx`, but handles course-selection rules that were awkward in Excel.
 
@@ -17,9 +17,9 @@ Keep all files in one folder and double-click `index.html`. To share it with stu
 | `ui.js` | Shared by every page: small page helpers, course chips and filters, and reading/saving the student's progress in the browser. |
 | `logic.js` | The degree rules as pure functions (no page code), so they can be tested in Node. |
 | `programs.html`, `programs.js` | The first page: the student chooses a program. Every other page redirects here until a program is chosen. |
-| `programs/*.js` | One data file per program (`bp162vi23.js`, `bp162opvi.js`), each adding itself to `window.PROGRAMS`. |
+| `programs/*.js` | One data file per program (`bp162vi23.js`, `bp162opvi.js`, `bh120.js`, `bh120vri23.js`), each adding itself to `window.PROGRAMS`. |
 | `data/make_data.py` | Regenerates `programs/bp162vi23.js` from `Course_List.xlsx` and the handbook text. Not needed to run the site. |
-| `data/make_opvi.py` | Regenerates `programs/bp162opvi.js` from the course lists written inside it. |
+| `data/make_opvi.py`, `data/make_bh120.py`, `data/make_bh120vri23.py` | Regenerate `programs/bp162opvi.js` and `programs/bh120.js` from the course lists written inside them. |
 
 Every page loads its scripts in this order: `data.js`, `logic.js`, `ui.js`, then its own script.
 
@@ -115,7 +115,9 @@ Each program file carries its own `ruleset`, labels, credit total, handbook link
 - `electives8` (BP162VI23): the original rules, with a major or minors.
 - `streams` (BP162OPVI): 13 core courses (11 electives, 288 credit points). Route A is 3 IT / Advanced IT options + one minor stream (4 courses) + 2 general options; Route B is 7 IT / Advanced IT options + 2 general options; both need 2 university electives. A course counts once, so a course that is both an IT option and a stream course fills only one place (this is checked with a small matching routine in `logic.js`). The handbook lists the same 14 courses as IT options and Advanced IT options, so they are one list.
 
-To add a third program, create `programs/<code>.js` the same way (copy `data/make_opvi.py` and edit the lists), load it in the three page files and `programs.html`, and add its rule set to `logic.js` if it needs a new one.
+- `techoptions` (BH120, Bachelor of Engineering (Software Engineering)(Honours)): 26 core courses, 4 technical options from a list of 25, and 2 university electives, 384 credit points over four years (11 semesters). It has no majors or minors, so the sequence page hides those choices.
+
+To add another program, create `programs/<code>.js` the same way (copy `data/make_opvi.py` and edit the lists), load it in the three page files and `programs.html`, and add its rule set to `logic.js` if it needs a new one.
 
 ### BP162OPVI assumptions to check
 
@@ -123,3 +125,16 @@ To add a third program, create `programs/<code>.js` the same way (copy `data/mak
 - Web Programming and Electronic Commerce and Enterprise Systems had no course code in the handbook text; they use `WEBPROG-TBC` and `ECES-TBC` until the real codes are known.
 - Courses with no teaching period in the handbook show as not in the schedule.
 - Prerequisites are not recorded yet, so the course list links to the handbook.
+
+### BH120 assumptions to check
+
+- The program code is written as `BH120`; use the handbook's full code (with its campus suffix) in `make_bh120.py` if it differs, which also fixes the handbook link.
+- No program plan guide was available, so the sequence is a suggestion (three courses a semester). Object-Oriented Programming has no teaching period in the handbook text.
+- Distributed Systems and Electronic Commerce and Enterprise Systems had no course code, so they use `DISTSYS-TBC` and `ECES-TBC`.
+- Technical options beyond four, and any university elective count above two, are not counted towards credit points.
+
+### BH120VRI23 (new edition of BH120)
+
+Same 26 core courses count and 2 university electives, but the 4 technical options become 4 minor courses, taken from one minor or from any minors (so the app accepts any 4 minor courses). The minors are the 8 minors of BP162VI23, read from `programs/bp162vi23.js` by `data/make_bh120vri23.py` (run `make_data.py` first when the minors change). A minor course that is a core course in this edition (for example Full Stack Development) is dropped from the minor, because a core course cannot count twice. The handbook says each minor's courses must be done in the listed order; the app shows suggestions in that order but does not enforce it. Majors are not offered, because the program summary lists only minors.
+
+Assumptions: Software Requirements Engineering and Usability Engineering have no code in the handbook text (`SREQ-TBC`, `USABEN-TBC`); the sequence order is a suggestion; Digital Economy has no published course list in the handbook text, as in BP162VI23.

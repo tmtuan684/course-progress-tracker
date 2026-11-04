@@ -99,7 +99,30 @@ const Logic = (() => {
       required: { done: requiredDone.length, total: required.length }, credits };
   }
 
+  // Core courses + 4 technical options (from the technical option list) + 2 university electives (BH120).
+  function evaluateTech(data, state) {
+    const courses = byId(data);
+    const done = new Set(state.done);
+    const isOption = (c) => !c.required && ((c.lists || []).includes('tech') || c.groups.length > 0);   // on a technical-option list or in a minor
+    const tech = data.courses.filter((c) => isOption(c) && done.has(c.id));
+    const elective = electiveDone(data, done);
+    const statuses = data.groups.map((g) => groupStatus(g, elective, done));
+    const name = data.optionName || 'technical options';
+    const U = Number(state.uni) || 0;
+    const techLeft = Math.max(0, 4 - tech.length), uniLeft = Math.max(0, 2 - U);
+    const required = data.courses.filter((c) => c.required);
+    const requiredDone = required.filter((c) => done.has(c.id));
+    const sum = (list) => list.reduce((t, c) => t + c.credits, 0);
+    const credits = { required: sum(requiredDone), programOptions: sum(tech.slice(0, 4)), university: Math.min(U, 2) * CONFIG.uniCredits };
+    credits.total = credits.required + credits.programOptions + credits.university;
+    const pathways = [{ id: 1, label: `4 ${name} (${Math.min(4, tech.length)} / 4) + 2 university electives (${Math.min(2, U)} / 2)`,
+      met: !techLeft && !uniLeft }];
+    return { statuses, D: tech.length, U, pathways, electivesMet: pathways[0].met,
+      required: { done: requiredDone.length, total: required.length }, credits };
+  }
+
   function evaluate(data, state) {
+    if (data.ruleset === 'techoptions') return evaluateTech(data, state);
     if (data.ruleset === 'streams') return evaluateStreams(data, state);
     const courses = byId(data);
     const done = new Set(state.done);
