@@ -132,7 +132,7 @@ const Logic = (() => {
     credits.total = credits.required + credits.programOptions + credits.university;
     const pathways = [{ id: 1, label: `4 ${name} (${Math.min(4, tech.length)} / 4) + 2 university electives (${Math.min(2, U)} / 2)`,
       met: !techLeft && !uniLeft }];
-    return { statuses, D: tech.length, U, pathways, electivesMet: pathways[0].met,
+    return { statuses, D: Math.min(4, tech.length), U, pathways, electivesMet: pathways[0].met,
       required: { done: requiredDone.length, total: required.length }, credits };
   }
 
@@ -293,7 +293,7 @@ const Logic = (() => {
     const ev = evaluateAny(data, state);
     const res = evaluatePath(data, state, expandDone(data, state.done));
     ev.path = res;
-    if (!state.path) {                              // no path chosen: show the best fit; role choices then decide the result
+    if (!state.path || (res && res.incomplete)) {   // no path chosen (or not set up yet): show the best fit; role choices then decide the result
       ev.autoPath = bestPath(data, state, expandDone(data, state.done));
       if (ev.autoPath && Object.keys(state.roles || {}).length) {
         const a = ev.autoPath;

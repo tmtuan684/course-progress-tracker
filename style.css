@@ -286,3 +286,27 @@ main.wide { display: block; }
 /* program card: "Copy courses" button and select readable on the white card */
 .program .copy-btn { background: var(--navy, #000054); color: #fff; border: 1px solid transparent; }
 .program .copy-btn:hover { filter: brightness(1.2); }
+
+/* Study path card: styled selects (path, major/minor choices) and the role dropdown in the course list */
+#progress .card label { font-size: .85rem; font-weight: 600; color: var(--navy, #000054); }
+#progress .card select, .roleSel {
+  appearance: none; -webkit-appearance: none;
+  padding: 8px 34px 8px 12px; border: 1px solid var(--line); border-radius: 6px; font: inherit; font-weight: 400; color: #1f2430;
+  background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='%23000054' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") no-repeat right 12px center;
+  cursor: pointer; transition: border-color .15s, box-shadow .15s;
+}
+#progress .card select:hover, .roleSel:hover { border-color: var(--navy, #000054); }
+#progress .card select:focus, .roleSel:focus { outline: none; border-color: var(--red, #e60028); box-shadow: 0 0 0 3px rgba(230, 0, 40, .18); }
+.roleSel { padding: 5px 30px 5px 10px; font-size: .85rem; background-color: #f4f7ff; }
+@media print { #progress .card select { border: 0; background-image: none; padding: 0; } }
+.plan select.roleSel {
+  appearance: none; -webkit-appearance: none; padding: 5px 30px 5px 10px; font-size: .85rem; background-color: #f4f7ff;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='%23000054' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right 10px center; cursor: pointer;
+}
+.plan select.roleSel:hover { border-color: var(--navy, #000054); }
+.plan select.roleSel:focus { outline: none; border-color: var(--red, #e60028); box-shadow: 0 0 0 3px rgba(230, 0, 40, .18); }
+
+.credit em { font-style: normal; font-size: 12px; color: var(--muted); }
+.credit.total em { color: #fffc; }
+@media print { .credit em { font-size: 9px; } .credit.total em { color: var(--muted); } }

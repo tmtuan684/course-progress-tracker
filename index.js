@@ -22,7 +22,7 @@ function pathCard(ev) {
   }).join('') : '';
   const p = ev.path;
   let detail = '';
-  if (p && p.incomplete) detail = `<p class="hint">Choose ${def.picks.length > 1 ? 'both' : 'the'} ${def.picks.map((x) => x.type.toLowerCase()).join(' and ')} to check this path.</p>`;
+  if (p && p.incomplete) detail = `<p class="hint">Choose ${def.picks.map((x) => x.label).join(' and ')} to check this path.</p>`;
   else if (p) {
     detail = `<ul class="groups">${p.roles.map((r) => `<li class="group ${r.have + r.uni >= r.need ? 'done' : ''}">
         <div class="row"><span>${esc(r.label)}</span><strong>${r.have}${r.uni ? ' + ' + r.uni + ' university' : ''} / ${r.need}</strong></div>${bar(r.have + r.uni, r.need)}
@@ -72,12 +72,16 @@ function renderProgress() {
     </div>`;
 
   // Credit points sit in the fixed bar beside the student name, so they stay visible while ticking.
+  const optionsName = { electives8: 'Major / minor / program options', streams: 'IT, stream & general options',
+    techoptions: data.groups.length ? 'Minor courses' : 'Technical options' }[data.ruleset] || 'Program options';
+  const count = (n) => `<em>${n} course${n === 1 ? '' : 's'}</em>`;     // completed courses of that type
+  const uniDone = data.courses.filter((c) => c.uni && state.done.includes(c.id)).length;
   $('#credits').innerHTML = `
     <span class="credits-title">Credit points</span>
-    <span class="credit"><small>Core</small><strong>${ev.credits.required}</strong></span>
-    <span class="credit"><small>Program options</small><strong>${ev.credits.programOptions}</strong></span>
-    <span class="credit"><small>University electives</small><strong>${ev.credits.university}</strong></span>
-    <span class="credit total"><small>Total</small><strong>${ev.credits.total} / ${PROGRAM_CREDITS}</strong></span>`;
+    <span class="credit"><small>Core</small><strong>${ev.credits.required}</strong>${count(ev.required.done)}</span>
+    <span class="credit"><small>${esc(optionsName)}</small><strong>${ev.credits.programOptions}</strong>${count(ev.D)}</span>
+    <span class="credit"><small>University electives</small><strong>${ev.credits.university}</strong>${count(uniDone)}</span>
+    <span class="credit total"><small>Total</small><strong>${ev.credits.total} / ${PROGRAM_CREDITS}</strong>${count(ev.required.done + ev.D + uniDone)}</span>`;
 }
 
 // ---------- course list ----------
@@ -104,10 +108,10 @@ function offeredBadge(c) {
 }
 
 // Role of a completed elective in the chosen path: automatic, or the student's own choice.
-function roleSelect(c, evp) {
+function roleSelect(c, evp, chosenOK) {
   const auto = evp.assigned[c.id];
   const own = state.roles[c.id] || '';
-  const opts = state.path
+  const opts = chosenOK
     ? evp.roles.filter((r, i, a) => a.findIndex((x) => x.role === r.role) === i && Logic.eligible(data, r.role).has(c.id))
     : Logic.rolesFor(data, c);                    // no path chosen yet: every role this course can play in the program
   return `<select class="roleSel" aria-label="Role of ${esc(c.name)}">
@@ -118,7 +122,8 @@ function roleSelect(c, evp) {
 
 function renderList() {
   const evAll = Logic.evaluate(data, state);
-  const evp = evAll.path || evAll.autoPath;     // the chosen path, or the best fit when none is chosen
+  const chosenOK = evAll.path && !evAll.path.incomplete;
+  const evp = chosenOK ? evAll.path : evAll.autoPath;     // the chosen path, or the best fit when none is chosen (or it is not set up yet)
   const pathOn = evp && !evp.incomplete;
   const filter = $('#filter').value || 'all';
   const q = $('#search').value.trim().toLowerCase();
@@ -134,7 +139,7 @@ function renderList() {
         <div class="chips">${chips}${offeredBadge(c)}</div>
       </div>
       <div class="plan">
-        ${done && pathOn && !c.required ? roleSelect(c, evp) : `<select class="planSel" aria-label="Plan for: ${esc(c.name)}" ${done ? 'disabled' : ''}>
+        ${done && pathOn && !c.required ? roleSelect(c, evp, chosenOK) : `<select class="planSel" aria-label="Plan for: ${esc(c.name)}" ${done ? 'disabled' : ''}>
           <option value="">Plan for…</option>
           ${CONFIG.planTerms.map((t) => `<option ${t === term ? 'selected' : ''}>${t}</option>`).join('')}
         </select>`}
