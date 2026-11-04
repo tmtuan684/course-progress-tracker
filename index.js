@@ -75,7 +75,7 @@ function renderProgress() {
   const optionsName = { electives8: 'Major / minor / program options', streams: 'IT, stream & general options',
     techoptions: data.groups.length ? 'Minor courses' : 'Technical options' }[data.ruleset] || 'Program options';
   const count = (n) => `<em>${n} course${n === 1 ? '' : 's'}</em>`;     // completed courses of that type
-  const uniDone = data.courses.filter((c) => c.uni && state.done.includes(c.id)).length;
+  const uniDone = ev.U;                                                 // placeholders ticked + courses counted as university electives
   $('#credits').innerHTML = `
     <span class="credits-title">Credit points</span>
     <span class="credit"><small>Core</small><strong>${ev.credits.required}</strong>${count(ev.required.done)}</span>
@@ -112,7 +112,8 @@ function roleSelect(c, evp, chosenOK) {
   const auto = evp.assigned[c.id];
   const own = state.roles[c.id] || '';
   const opts = chosenOK
-    ? evp.roles.filter((r, i, a) => a.findIndex((x) => x.role === r.role) === i && Logic.eligible(data, r.role).has(c.id))
+    ? [...evp.roles.filter((r, i, a) => a.findIndex((x) => x.role === r.role) === i && Logic.eligible(data, r.role).has(c.id)),
+      ...(c.uni ? [] : [{ role: 'uni', label: Logic.roleLabel(data, 'uni') }])]     // any course may count as a university elective
     : Logic.rolesFor(data, c);                    // no path chosen yet: every role this course can play in the program
   return `<select class="roleSel" aria-label="Role of ${esc(c.name)}">
     <option value="">Auto: ${esc(auto ? Logic.roleLabel(data, auto) : 'not counted')}</option>

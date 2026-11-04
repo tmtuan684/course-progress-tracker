@@ -30,9 +30,10 @@ const Logic = (() => {
 
   // University electives completed = ticked University elective placeholder courses (older data: the typed number).
   function uniCount(data, state, done) {
+    const extra = state.uniExtra || 0;                           // other courses the student chose to count as a university elective
     const placeholders = data.courses.filter((c) => c.uni);
-    if (!placeholders.length) return Number(state.uni) || 0;
-    return placeholders.filter((c) => done.has(c.id)).length;
+    if (!placeholders.length) return (Number(state.uni) || 0) + extra;
+    return placeholders.filter((c) => done.has(c.id)).length + extra;
   }
 
   // A course used as a REQUIRED course cannot also fill an elective slot, so only
@@ -185,7 +186,7 @@ const Logic = (() => {
   // ---------- study paths ----------
   // A path is one way to finish the electives. The student picks one; every completed elective course then plays
   // one role in it (counts towards a major, a minor, program options ...), chosen automatically and changeable.
-  const ROLE_NAMES = { it: 'IT / Advanced IT option', general: 'General option', tech: 'Technical option' };
+  const ROLE_NAMES = { it: 'IT / Advanced IT option', general: 'General option', tech: 'Technical option', uni: 'University elective' };
   function pathDefs(data) {
     const g = (id) => data.groups.find((x) => x.id === id);
     const need = (id) => (g(id) ? g(id).need : 4);
@@ -224,7 +225,7 @@ const Logic = (() => {
     return new Set(data.courses.filter((c) => !c.required && (role === 'option' ? c.groups.length > 0 : (c.lists || []).includes(role))).map((c) => c.id));
   }
   function validRoles(data) {
-    return new Set(['none', 'option', 'it', 'general', 'tech', ...data.groups.map((g) => g.id)]);
+    return new Set(['none', 'uni', 'option', 'it', 'general', 'tech', ...data.groups.map((g) => g.id)]);
   }
 
   // Place completed elective courses into the path's places (largest matching), honouring the student's own role choices.
@@ -271,6 +272,7 @@ const Logic = (() => {
     const out = c.groups.map((id) => ({ role: id, label: roleLabel(data, id) }));
     if (c.groups.length && data.ruleset !== 'streams') out.push({ role: 'option', label: roleLabel(data, 'option') });   // streams programs have no free 'option' role
     (c.lists || []).filter((l) => l !== 'uni').forEach((l) => out.push({ role: l, label: roleLabel(data, l) }));
+    if (!c.required && !c.uni) out.push({ role: 'uni', label: roleLabel(data, 'uni') });      // any other course may be counted as a university elective
     return out;
   }
 
@@ -290,6 +292,9 @@ const Logic = (() => {
 
   // Check the elective requirement. With a study path chosen, only that path counts; otherwise any path may satisfy it.
   function evaluate(data, state) {
+    // a course the student counts as a university elective leaves the major/minor/option places and adds to the university electives
+    const asUni = state.done.filter((id) => (state.roles || {})[id] === 'uni' && byId(data)[id] && !byId(data)[id].required && !byId(data)[id].uni);
+    if (asUni.length) state = { ...state, done: state.done.filter((id) => !asUni.includes(id)), uniExtra: asUni.length };
     const ev = evaluateAny(data, state);
     const res = evaluatePath(data, state, expandDone(data, state.done));
     ev.path = res;
