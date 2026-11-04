@@ -171,6 +171,7 @@ $('#progress').addEventListener('change', (e) => {
   save(); renderAll();
 });
 
+window.addEventListener('pagehide', save);     // everything is saved on each change; this is a last safety net
 $('#name').addEventListener('input', (e) => { state.name = e.target.value.slice(0, 80); save(); });
 $('#print').addEventListener('click', () => { renderReport(); window.print(); });
 

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Course Planner</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <div>
+      <h1>Course Planner</h1>
+      <p id="program"></p>
+    </div>
+    <nav><a href="index.html" class="current">My progress</a><a href="courses.html">Course list</a><a href="sequence.html">Course sequence</a><a href="programs.html">Change program</a></nav>
+    <div class="actions">
+      <button id="print">Download PDF report</button>
+      <button id="export">Export progress</button>
+      <label class="button">Import<input id="import" type="file" accept="application/json" hidden></label>
+      <button id="reset" class="danger">Restart planner</button>
+    </div>
+  </header>
+
+  <div id="student">
+    <div class="student-inner">
+      <label>Student name <input id="name" type="text" maxlength="80" placeholder="Type your name for the report"></label>
+      <div id="credits" aria-live="polite"></div>
+      <span id="report-date"></span>
+    </div>
+  </div>
+
+  <main>
+    <section id="progress" aria-label="Progress"></section>
+
+    <section id="courses" aria-label="Courses">
+      <div class="toolbar">
+        <input id="search" type="search" placeholder="Search code or name">
+        <select id="filter" aria-label="Filter courses"></select>
+      </div>
+      <p class="hint">Tip: tick one course, then Shift+click the tick box of another to tick every course in between.</p>
+      <div id="list"></div>
+      <div id="report-completed"></div>
+    </section>
+
+    <section id="plan" aria-label="Semester plan">
+      <h2>Semester plan</h2>
+      <div id="plan-summary"></div>
+    </section>
+  </main>
+
+  <!-- order matters: data first, then logic, then the UI that uses both -->
+  <script src="programs/bp162vi23.js"></script>
+  <script src="programs/bp162opvi.js"></script>
+  <script src="programs/bh120.js"></script>
+  <script src="programs/bh120vri23.js"></script>
+  <script src="programs/equivalences.js"></script>
+  <script src="logic.js"></script>
+  <script src="ui.js"></script>
+  <script src="index.js"></script>
+</body>
+</html>

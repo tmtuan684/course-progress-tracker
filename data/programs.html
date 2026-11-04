@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Choose your program</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <div>
+      <h1>Course Planner</h1>
+      <p>RMIT University Vietnam, Saigon South</p>
+    </div>
+  </header>
+
+  <dialog id="welcome" aria-labelledby="welcome-title">
+    <h2 id="welcome-title">Welcome back</h2>
+    <p class="hint">This browser has saved progress. Continue where you left off, or start fresh (this erases the saved progress from this browser). On a shared computer, start fresh unless the progress below is yours.</p>
+    <ul id="welcome-list"></ul>
+    <div class="welcome-actions">
+      <button id="welcome-continue" class="choose">Continue my progress</button>
+      <button id="welcome-fresh" class="danger">Start fresh</button>
+    </div>
+  </dialog>
+
+  <main class="wide">
+    <h2 class="choose-title">Choose your program</h2>
+    <p class="hint">Pick the program you are studying. The planner then follows that program's courses and rules. Your progress is saved separately for each program, so you can switch back and forth without losing anything.</p>
+    <div id="programs" class="program-grid"></div>
+  </main>
+
+  <script src="programs/bp162vi23.js"></script>
+  <script src="programs/bp162opvi.js"></script>
+  <script src="programs/bh120.js"></script>
+  <script src="programs/bh120vri23.js"></script>
+  <script src="programs/equivalences.js"></script>
+  <script src="programs.js"></script>
+</body>
+</html>

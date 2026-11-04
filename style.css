@@ -260,3 +260,12 @@ main.wide { display: block; }
 .program h3 { margin: 0 0 .25rem; color: var(--navy, #000054); }
 .program button.choose { background: var(--red, #e60028); color: #fff; border: 0; border-radius: 4px; padding: .5rem .9rem; cursor: pointer; font: inherit; }
 .program button.choose:hover { filter: brightness(.92); }
+
+.program .copy { margin-top: .75rem; font-size: .9rem; }
+.program .copy select, .program .copy .copy-btn { margin: .4rem .4rem 0 0; font: inherit; }
+
+#welcome { max-width: 32rem; border: 0; border-radius: 8px; padding: 1.25rem 1.5rem; box-shadow: 0 8px 30px rgba(0,0,0,.3); }
+#welcome::backdrop { background: rgba(0,0,84,.55); }
+#welcome ul { padding-left: 1.1rem; }
+.welcome-actions { display: flex; gap: .6rem; flex-wrap: wrap; margin-top: 1rem; }
+.welcome-actions button { font: inherit; padding: .5rem .9rem; border-radius: 4px; cursor: pointer; }

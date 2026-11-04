@@ -20,6 +20,14 @@ const Logic = (() => {
     return lookups.get(data);
   }
 
+  // Courses that count as completed: the ticked ones plus any course declared equivalent to a ticked one.
+  // data.equiv = { courseId: [codes that count for it] } (built from programs/equivalences.js in ui.js).
+  function expandDone(data, done) {
+    const out = new Set(done);
+    for (const [id, alts] of Object.entries(data.equiv || {})) if (alts.some((a) => out.has(a))) out.add(id);
+    return out;
+  }
+
   // A course used as a REQUIRED course cannot also fill an elective slot, so only
   // non-required completed courses count towards majors/minors/program options.
   function electiveDone(data, done) {
@@ -67,7 +75,7 @@ const Logic = (() => {
   // Route A: 3 IT options + 4 stream courses + 2 general; Route B: 7 IT options + 2 general; both + 2 university electives.
   function evaluateStreams(data, state) {
     const courses = byId(data);
-    const done = new Set(state.done);
+    const done = expandDone(data, state.done);
     const elective = electiveDone(data, done);
     const ids = [...elective];
     const listSet = (name) => new Set(data.courses.filter((c) => !c.required && (c.lists || []).includes(name)).map((c) => c.id));
@@ -102,7 +110,7 @@ const Logic = (() => {
   // Core courses + 4 technical options (from the technical option list) + 2 university electives (BH120).
   function evaluateTech(data, state) {
     const courses = byId(data);
-    const done = new Set(state.done);
+    const done = expandDone(data, state.done);
     const isOption = (c) => !c.required && ((c.lists || []).includes('tech') || c.groups.length > 0);   // on a technical-option list or in a minor
     const tech = data.courses.filter((c) => isOption(c) && done.has(c.id));
     const elective = electiveDone(data, done);
@@ -125,7 +133,7 @@ const Logic = (() => {
     if (data.ruleset === 'techoptions') return evaluateTech(data, state);
     if (data.ruleset === 'streams') return evaluateStreams(data, state);
     const courses = byId(data);
-    const done = new Set(state.done);
+    const done = expandDone(data, state.done);
     const elective = electiveDone(data, done);
     const statuses = data.groups.map((g) => groupStatus(g, elective, done));
     const majors = statuses.filter((s) => s.group.type === 'Major');
@@ -197,7 +205,7 @@ const Logic = (() => {
     return Math.floor(i / CONFIG.termsPerYear) + '-' + ((i % CONFIG.termsPerYear) + 1);
   }
 
-  return { evaluate, planCheck, offering, offeredIn, byId, isTerm, termFor };
+  return { evaluate, expandDone, planCheck, offering, offeredIn, byId, isTerm, termFor };
 })();
 
 if (typeof module !== 'undefined') module.exports = { Logic, CONFIG }; // lets Node tests import it

@@ -138,3 +138,18 @@ To add another program, create `programs/<code>.js` the same way (copy `data/mak
 Same 26 core courses count and 2 university electives, but the 4 technical options become 4 minor courses, taken from one minor or from any minors (so the app accepts any 4 minor courses). The minors are the 8 minors of BP162VI23, read from `programs/bp162vi23.js` by `data/make_bh120vri23.py` (run `make_data.py` first when the minors change). A minor course that is a core course in this edition (for example Full Stack Development) is dropped from the minor, because a core course cannot count twice. The handbook says each minor's courses must be done in the listed order; the app shows suggestions in that order but does not enforce it. Majors are not offered, because the program summary lists only minors.
 
 Assumptions: Software Requirements Engineering and Usability Engineering have no code in the handbook text (`SREQ-TBC`, `USABEN-TBC`); the sequence order is a suggestion; Digital Economy has no published course list in the handbook text, as in BP162VI23.
+
+## Yearly changes: replaced and equivalent courses
+
+Each edition is its own program file, so last year's students keep working on the old edition. Two things help with courses that change:
+
+- **Copy progress to another edition.** On the program chooser, a program card shows "Copy my progress from another program" when another program has ticked courses. Courses with the same code match automatically; the rest match through the table below. The app lists every course it could not match before copying, and it never overwrites: ticks are added to what the target program already has.
+- **Equivalence table.** Edit `data/equivalences.csv` (columns `from_program,from_code,to_program,to_code,note`; lines starting with `#` are ignored) and run `python3 -I data/make_equivalences.py programs/equivalences.js`. A row between two different programs says "completed here counts as that there" when copying. A row where both programs are the same says the two courses are interchangeable inside that program, so completing `from_code` also counts for `to_code` in progress and credit points (add the row twice for two-way). The table is empty at the moment, because no real replacements have been confirmed.
+
+New edition checklist: copy the previous edition's generator script, change the code and the lists, add the new file to the five `<script>` blocks (the four pages and `programs.html`, which load `programs/*.js`), add rows to `equivalences.csv` for renamed or recoded courses, and regenerate.
+
+## Fresh start and saving on each student's browser
+
+Nothing is stored on a server. Progress is saved in the student's own browser (localStorage) after every change, and once more when the page is closed, with a "last saved" time.
+
+Every new browser session (a newly opened tab or window) starts on the program chooser, whatever any earlier visitor chose. If the browser holds saved progress, a "Welcome back" box lists it and asks the student to **Continue my progress** or **Start fresh** (which erases the saved progress in that browser after a confirmation). This keeps a shared lab computer from showing the previous student's data. Moving between pages in the same tab does not ask again. A browser that blocks storage simply starts fresh each time, so students there should use Export progress and Import.
