@@ -104,7 +104,7 @@ function saveState(state) {
 }
 // Ask, then clear everything this site saved. Returns false if the student cancels.
 function restartPlanner() {
-  if (!confirm('Restart the course planner? This clears your ticked courses, plans, name, starting term, breaks, major/minors and chosen courses.')) return false;
+  if (!confirm('Restart the study plan? This clears your ticked courses, plans, name, starting term, breaks, major/minors and chosen courses.')) return false;
   try { localStorage.removeItem(STORAGE_KEY); localStorage.removeItem(STORAGE_KEY + '.at'); localStorage.removeItem(FOLD_KEY); } catch (e) { /* nothing to clear */ }
   return true;
 }

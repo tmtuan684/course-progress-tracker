@@ -1,4 +1,4 @@
-# Course Planner (RMIT Saigon South: BP162VI23, BP162OPVI, BH120 and BH120VRI23)
+# SSET IT & SE & CS Study Plan (RMIT Saigon South: BP162VI23, BP162OPVI, BH120 and BH120VRI23)
 
 A small web app where a student ticks completed courses, sees progress toward the degree, and plans courses for upcoming semesters. It is plain HTML, CSS and JavaScript with no framework, no build step and no server. It does the same job as `Course_List.xlsx`, but handles course-selection rules that were awkward in Excel.
 
@@ -110,7 +110,7 @@ For a new academic year, also check:
 
 ## Several programs
 
-The student chooses a program on `programs.html`; the choice is kept in the browser (`course-planner.program`) and shown in each page's header. **Change program** in the menu returns to the chooser. Progress is saved per program (`course-planner.v1` for BP162VI23, `course-planner.v1.BP162OPVI` for the other), so switching never loses ticks.
+The student chooses a program on `programs.html`; the choice is kept in the browser (`course-planner.program`) and shown in each page's header. **Program plan** in the menu returns to the chooser. Progress is saved per program (`course-planner.v1` for BP162VI23, `course-planner.v1.BP162OPVI` for the other), so switching never loses ticks.
 
 Each program file carries its own `ruleset`, labels, credit total, handbook link, sequence and offering schedule:
 
