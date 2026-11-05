@@ -1,10 +1,15 @@
+/* RMIT brand font Museo RMIT VN (Light 300, Medium 500, Bold 700, files in fonts/) is used for headings only; body text is Helvetica / Arial */
+@font-face { font-family: "Museo RMIT VN"; font-weight: 300; font-style: normal; font-display: swap; src: url("fonts/MuseoRMITVN-300.otf") format("opentype"); }
+@font-face { font-family: "Museo RMIT VN"; font-weight: 500; font-style: normal; font-display: swap; src: url("fonts/MuseoRMITVN-500.otf") format("opentype"); }
+@font-face { font-family: "Museo RMIT VN"; font-weight: 700; font-style: normal; font-display: swap; src: url("fonts/MuseoRMITVN-700.otf") format("opentype"); }
+
 :root {
   --bg: #f6f7f9; --card: #fff; --ink: #1d2433; --muted: #6b7385; --line: #e1e5ec;
   --major: #e0a800; --minor: #3d85c6; --bad: #b3261e; --ok: #2e7d32;
   --navy: #000054; --red: #e60028; --required: #000054;   /* RMIT deep navy and brand red */
 }
 * { box-sizing: border-box; }
-body { margin: 0; font: 15px/1.45 system-ui, -apple-system, "Segoe UI", Arial, sans-serif; background: var(--bg); color: var(--ink); }
+body { margin: 0; font: 15px/1.45 "Helvetica Neue", Helvetica, Arial, sans-serif; background: var(--bg); color: var(--ink); }
 /* Fixed-width title column so the nav sits in the same place on every page, whatever the title or buttons */
 header { display: grid; grid-template-columns: 280px auto 1fr; gap: 12px 24px; align-items: center;
   padding: 16px 20px; background: var(--navy); color: #fff; }
@@ -291,7 +296,7 @@ main.wide { display: block; }
 #progress .card label { font-size: .85rem; font-weight: 600; color: var(--navy, #000054); }
 #progress .card select, .roleSel {
   appearance: none; -webkit-appearance: none;
-  padding: 8px 34px 8px 12px; border: 1px solid var(--line); border-radius: 6px; font: inherit; font-weight: 400; color: #1f2430;
+  padding: 8px 34px 8px 12px; border: 1px solid var(--line); border-radius: 6px; font: inherit; font-weight: 500; color: #1f2430;
   background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='%23000054' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") no-repeat right 12px center;
   cursor: pointer; transition: border-color .15s, box-shadow .15s;
 }
@@ -310,3 +315,9 @@ main.wide { display: block; }
 .credit em { font-style: normal; font-size: 12px; color: var(--muted); }
 .credit.total em { color: #fffc; }
 @media print { .credit em { font-size: 9px; } .credit.total em { color: var(--muted); } }
+
+/* form controls use the page font */
+button, input, select, textarea { font-family: inherit; }
+
+/* headings use the RMIT brand font */
+h1, h2, h3, h4 { font-family: "Museo RMIT VN", "Helvetica Neue", Helvetica, Arial, sans-serif; font-weight: 700; }

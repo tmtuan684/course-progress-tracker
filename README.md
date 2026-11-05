@@ -1,6 +1,7 @@
 # Course Planner (RMIT Saigon South: BP162VI23, BP162OPVI, BH120 and BH120VRI23)
 
-A small web app where a student ticks completed courses, sees progress toward the degree, and plans courses for upcoming semesters. It is plain HTML, CSS and JavaScript with no framework, no build step and no server. 
+A small web app where a student ticks completed courses, sees progress toward the degree, and plans courses for upcoming semesters. It is plain HTML, CSS and JavaScript with no framework, no build step and no server. It does the same job as `Course_List.xlsx`, but handles course-selection rules that were awkward in Excel.
+
 ## Run it
 
 Keep all files in one folder and double-click `index.html`. To share it with students, upload the site files (everything except `tools/` and `README.md`) to any static host (GitHub Pages, Netlify, a university web space).
@@ -9,16 +10,17 @@ Keep all files in one folder and double-click `index.html`. To share it with stu
 
 | File | Purpose |
 |---|---|
-| `index.html`, `index.js` | My progress page: tick completed courses, plan terms, see progress and credit points. `index.js` keeps the page's state and draws it. |
-| `courses.html`, `courses.js` | Course list page: every course with its offering per term. |
+| `index.html`, `index.js` | My progress page: tick completed courses, plan terms, see progress and credit points. `index.js` keeps the page's state and draws it; it contains no degree rules. |
+| `courses.html`, `courses.js` | Course list page: every course with its offering per term (read-only). |
 | `sequence.html`, `sequence.js` | Course sequence page: the recommended order from semester 1 to 8 (years 1 to 3), with completed courses highlighted from saved progress. |
+| `fonts/` | The RMIT brand font Museo RMIT VN (Light 300, Medium 500, Bold 700, `.otf`), loaded by `@font-face` in `style.css` and used for headings only; body text is Helvetica / Arial. Keep the folder next to the pages. |
 | `style.css` | Appearance: RMIT colours (red `#e60028`, navy `#000054`) in `:root`, plus a compact print layout for the one-page PDF. |
 | `ui.js` | Shared by every page: small page helpers, course chips and filters, and reading/saving the student's progress in the browser. |
 | `logic.js` | The degree rules as pure functions (no page code), so they can be tested in Node. |
 | `allcourses.html`, `allcourses.js` | All courses page: every course across the programs once, with the programs and roles that use it and its 2026 offering. |
 | `programs.html`, `programs.js` | The first page: the student chooses a program. Every other page redirects here until a program is chosen. |
 | `programs/*.js` | One data file per program (`bp162vi23.js`, `bp162opvi.js`, `bh120.js`, `bh120vri23.js`), each adding itself to `window.PROGRAMS`. |
-| `data/make_data.py` | Regenerates `programs/bp162vi23.js` from `Course_List.xlsx` and the handbook text. |
+| `data/make_data.py` | Regenerates `programs/bp162vi23.js` from `Course_List.xlsx` and the handbook text. Not needed to run the site. |
 | `data/make_opvi.py`, `data/make_bh120.py`, `data/make_bh120vri23.py` | Regenerate `programs/bp162opvi.js` and `programs/bh120.js` from the course lists written inside them. |
 
 Every page loads its scripts in this order: `data.js`, `logic.js`, `ui.js`, then its own script.
